@@ -64,7 +64,7 @@ jobs:
           cmake -G Ninja -S /tmp/brotli -B /tmp/brotli/build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DBROTLI_DISABLE_TESTS=ON -DCMAKE_C_COMPILER=clang
           ninja -C /tmp/brotli/build brotlicommon brotlidec brotlienc
           mkdir -p /tmp/dist
-          tar -czf /tmp/dist/brotli-shared-linux-x64.tar.gz -C /tmp/brotli/build libbrotlicommon.so* libbrotlidec.so* libbrotlienc.so*
+          (cd /tmp/brotli/build && tar -czf /tmp/dist/brotli-shared-linux-x64.tar.gz libbrotlicommon.so* libbrotlidec.so* libbrotlienc.so*)
           tar -czf "/tmp/dist/brotli-include-${SHA}.tar.gz" -C /tmp/brotli/c include
           cd /tmp/dist && sha256sum *.tar.gz > SHA256SUMS-brotli-x64.txt
           gh release upload "$TAG" /tmp/dist/* --repo awesome-os/sectium-browser --clobber
@@ -83,9 +83,9 @@ jobs:
           git clone --depth=1 https://chromium.googlesource.com/webm/libwebp /tmp/libwebp
           SHA=$(git -C /tmp/libwebp rev-parse --short HEAD)
           cmake -G Ninja -S /tmp/libwebp -B /tmp/libwebp/build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DWEBP_BUILD_ANIM_UTILS=OFF -DWEBP_BUILD_CWEBP=OFF -DWEBP_BUILD_DWEBP=OFF -DWEBP_BUILD_GIF2WEBP=OFF -DWEBP_BUILD_IMG2WEBP=OFF -DWEBP_BUILD_VWEBP=OFF -DWEBP_BUILD_WEBPINFO=OFF -DWEBP_BUILD_WEBPMUX=OFF -DWEBP_BUILD_EXTRAS=OFF -DCMAKE_C_COMPILER=clang
-          ninja -C /tmp/libwebp/build webp webpdemux webpmux
+          ninja -C /tmp/libwebp/build webp webpdemux
           mkdir -p /tmp/dist
-          tar -czf /tmp/dist/libwebp-shared-linux-x64.tar.gz -C /tmp/libwebp/build libwebp.so* libwebpdemux.so* libwebpmux.so* libsharpyuv.so*
+          (cd /tmp/libwebp/build && tar -czf /tmp/dist/libwebp-shared-linux-x64.tar.gz libwebp*.so* libsharpyuv*.so*)
           tar -czf "/tmp/dist/libwebp-include-${SHA}.tar.gz" -C /tmp/libwebp/src webp
           cd /tmp/dist && sha256sum *.tar.gz > SHA256SUMS-libwebp-x64.txt
           gh release upload "$TAG" /tmp/dist/* --repo awesome-os/sectium-browser --clobber
@@ -104,9 +104,9 @@ jobs:
           git clone --depth=1 https://github.com/zlib-ng/zlib-ng.git /tmp/zlib-ng
           SHA=$(git -C /tmp/zlib-ng rev-parse --short HEAD)
           cmake -G Ninja -S /tmp/zlib-ng -B /tmp/zlib-ng/build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DZLIB_COMPAT=ON -DZLIB_ENABLE_TESTS=OFF -DCMAKE_C_COMPILER=clang
-          ninja -C /tmp/zlib-ng/build zlib
+          ninja -C /tmp/zlib-ng/build
           mkdir -p /tmp/dist
-          tar -czf /tmp/dist/zlib-shared-linux-x64.tar.gz -C /tmp/zlib-ng/build libz.so*
+          (cd /tmp/zlib-ng/build && tar -czf /tmp/dist/zlib-shared-linux-x64.tar.gz libz.so*)
           tar -czf "/tmp/dist/zlib-include-${SHA}.tar.gz" -C /tmp/zlib-ng/build zlib.h zconf.h
           cd /tmp/dist && sha256sum *.tar.gz > SHA256SUMS-zlib-x64.txt
           gh release upload "$TAG" /tmp/dist/* --repo awesome-os/sectium-browser --clobber
@@ -127,7 +127,7 @@ jobs:
           cmake -G Ninja -S /tmp/libpng -B /tmp/libpng/build -DCMAKE_BUILD_TYPE=Release -DPNG_SHARED=ON -DPNG_STATIC=OFF -DPNG_TESTS=OFF -DCMAKE_C_COMPILER=clang
           ninja -C /tmp/libpng/build png_shared
           mkdir -p /tmp/dist
-          tar -czf /tmp/dist/libpng-shared-linux-x64.tar.gz -C /tmp/libpng/build libpng16.so*
+          (cd /tmp/libpng/build && tar -czf /tmp/dist/libpng-shared-linux-x64.tar.gz libpng16.so*)
           tar -czf "/tmp/dist/libpng-include-${SHA}.tar.gz" -C /tmp/libpng png.h pngconf.h
           cd /tmp/dist && sha256sum *.tar.gz > SHA256SUMS-libpng-x64.txt
           gh release upload "$TAG" /tmp/dist/* --repo awesome-os/sectium-browser --clobber
