@@ -1,0 +1,14 @@
+# Upstream V8 `libv8_monolith` GN profile for `just-js/lo` and `bun-neon-v8`
+# Exposes public symbols + v8-fast-api-calls.h + raw external pointer FFI (`v8_enable_sandbox = false`)
+is_component_build = false
+is_debug = false
+v8_monolithic = true
+v8_static_library = true
+v8_use_external_startup_data = false
+v8_expose_public_symbols = true
+v8_enable_sandbox = false
+v8_enable_pointer_compression = false
+v8_enable_i18n_support = false
+treat_warnings_as_errors = false
+symbol_level = 0
+use_custom_libcxx = false

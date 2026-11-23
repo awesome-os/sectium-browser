@@ -4,9 +4,17 @@ on:
   workflow_dispatch:
     inputs:
       release_tag:
-        description: 'Target release tag for the cloud-compiled V8 component pack'
+        description: 'Target release tag for the cloud-compiled V8 pack'
         required: true
         default: 'v0.6.0-v8-cloud'
+      build_flavor:
+        description: 'component (shared libv8.so for Sectium) or lo-monolith (libv8_monolith.a + headers + patches for just-js/lo & bun-neon-v8)'
+        required: true
+        default: 'lo-monolith'
+      target_cpu:
+        description: 'Target CPU architecture: x64 or arm64 (cross-compiled on ubuntu-latest)'
+        required: true
+        default: 'x64'
       bounce_index:
         description: 'Current Damped Gravity bounce (0 = start)'
         required: true
@@ -41,12 +49,15 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            /tmp/v8-work/v8/out/Component
-          key: v8-gravity-${{ inputs.release_tag }}-drop-${{ inputs.bounce_index }}
+            /tmp/v8-work/v8/out/Build
+          key: v8-gravity-${{ inputs.release_tag }}-${{ inputs.build_flavor }}-${{ inputs.target_cpu }}-drop-${{ inputs.bounce_index }}
           restore-keys: |
-            v8-gravity-${{ inputs.release_tag }}-drop-
+            v8-gravity-${{ inputs.release_tag }}-${{ inputs.build_flavor }}-${{ inputs.target_cpu }}-drop-
 
-      - name: Setup depot_tools & Shallow Upstream V8 Source
+      - name: Setup depot_tools, Shallow Upstream V8 & Apply lo Fast-Call Patches
+        env:
+          TARGET_CPU: ${{ inputs.target_cpu || 'x64' }}
+          FLAVOR: ${{ inputs.build_flavor || 'lo-monolith' }}
         run: |
           mkdir -p /tmp/v8-work
           cd /tmp/v8-work
@@ -57,32 +68,52 @@ jobs:
             fetch --no-history v8
           fi
           cd /tmp/v8-work/v8
+          if [ "$TARGET_CPU" = "arm64" ]; then
+            echo "[gravity] Installing Linux ARM64 cross-compile sysroot..."
+            python3 build/linux/sysroot_scripts/install-sysroot.py --arch=arm64
+          fi
+          if [ "$FLAVOR" = "lo-monolith" ] && [ -d "${GITHUB_WORKSPACE}/patches/v8-lo-fastcall" ]; then
+            for p in "${GITHUB_WORKSPACE}"/patches/v8-lo-fastcall/*.patch; do
+              [ -f "$p" ] || continue
+              echo "[gravity] Applying V8 lo fast-call patch: $(basename "$p")"
+              git apply --check "$p" && git apply "$p"
+            done
+          fi
           V8_SHA=$(git rev-parse --short HEAD)
           echo "V8_SHA=$V8_SHA" >> "$GITHUB_ENV"
-          echo "[gravity] Upstream V8 HEAD=$V8_SHA"
+          echo "[gravity] Upstream V8 HEAD=$V8_SHA | flavor=$FLAVOR | target_cpu=$TARGET_CPU"
 
-      - name: Configure Component Build GN Args (is_component_build = true)
+      - name: Configure GN Args (component or lo-monolith)
+        env:
+          TARGET_CPU: ${{ inputs.target_cpu || 'x64' }}
+          FLAVOR: ${{ inputs.build_flavor || 'lo-monolith' }}
         run: |
           export PATH="/tmp/v8-work/depot_tools:$PATH"
           cd /tmp/v8-work/v8
-          mkdir -p out/Component
-          cat << 'EOF' > out/Component/args.gn
+          mkdir -p out/Build
+          if [ "$FLAVOR" = "lo-monolith" ]; then
+            cp "${GITHUB_WORKSPACE}/patches/v8-lo-fastcall/lo-args.gn" out/Build/args.gn
+            echo "target_cpu = \"${TARGET_CPU}\"" >> out/Build/args.gn
+          else
+            cat << EOF > out/Build/args.gn
           is_component_build = true
           is_debug = false
-          target_cpu = "x64"
+          target_cpu = "${TARGET_CPU}"
           v8_monolithic = false
           v8_use_external_startup_data = false
           treat_warnings_as_errors = false
           symbol_level = 0
           v8_enable_sandbox = true
           EOF
-          gn gen out/Component
+          fi
+          cat out/Build/args.gn
+          gn gen out/Build
 
       - name: Restore Previous Staging Release .o Checkpoint (Zero-Race Fallback)
         if: inputs.bounce_index != '0'
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ inputs.release_tag }}-staging
+          TAG: ${{ inputs.release_tag }}-${{ inputs.build_flavor }}-${{ inputs.target_cpu }}-staging
           PREV_IDX: ${{ inputs.bounce_index }}
         run: |
           PREV=$((PREV_IDX - 1))
@@ -90,9 +121,9 @@ jobs:
           if gh release download "$TAG" --pattern "v8-drop-${PREV}-objs.*" --dir /tmp/v8-restore --clobber 2>/dev/null; then
             echo "[gravity] Restoring compiled objects from staging release drop #${PREV}..."
             if [ -f "/tmp/v8-restore/v8-drop-${PREV}-objs.tar.zst" ]; then
-              tar --zstd -xf "/tmp/v8-restore/v8-drop-${PREV}-objs.tar.zst" -C /tmp/v8-work/v8/out/Component
+              tar --zstd -xf "/tmp/v8-restore/v8-drop-${PREV}-objs.tar.zst" -C /tmp/v8-work/v8/out/Build
             elif [ -f "/tmp/v8-restore/v8-drop-${PREV}-objs.tar.gz" ]; then
-              tar -xzf "/tmp/v8-restore/v8-drop-${PREV}-objs.tar.gz" -C /tmp/v8-work/v8/out/Component
+              tar -xzf "/tmp/v8-restore/v8-drop-${PREV}-objs.tar.gz" -C /tmp/v8-work/v8/out/Build
             fi
           fi
 
@@ -101,16 +132,20 @@ jobs:
         env:
           DROP_SECONDS: ${{ inputs.drop_seconds || '420' }}
           BOUNCE_INDEX: ${{ inputs.bounce_index || '0' }}
+          FLAVOR: ${{ inputs.build_flavor || 'lo-monolith' }}
         run: |
           export PATH="/tmp/v8-work/depot_tools:$PATH"
           cd /tmp/v8-work/v8
+          TARGET="v8_libbase v8_libplatform v8"
+          if [ "$FLAVOR" = "lo-monolith" ]; then
+            TARGET="v8_monolith"
+          fi
           set +e
-          timeout --signal=INT "${DROP_SECONDS}s" ninja -C out/Component v8_libbase v8_libplatform v8
+          timeout --signal=INT "${DROP_SECONDS}s" ninja -C out/Build $TARGET
           RC=$?
           set -e
-          OBJ_COUNT=$(find out/Component/obj -name '*.o' 2>/dev/null | wc -l)
-          SO_COUNT=$(find out/Component -maxdepth 1 -name 'lib*.so' 2>/dev/null | wc -l)
-          echo "[gravity] Drop #${BOUNCE_INDEX} finished with rc=${RC} | compiled_objs=${OBJ_COUNT} | shared_libs=${SO_COUNT}"
+          OBJ_COUNT=$(find out/Build/obj -name '*.o' 2>/dev/null | wc -l)
+          echo "[gravity] Drop #${BOUNCE_INDEX} (${FLAVOR}) finished rc=${RC} | compiled_objs=${OBJ_COUNT}"
           if [ "$RC" -eq 0 ]; then
             echo "grounded=true" >> "$GITHUB_OUTPUT"
           elif [ "$RC" -eq 124 ] || [ "$RC" -eq 130 ]; then
@@ -120,22 +155,21 @@ jobs:
             exit "$RC"
           fi
           echo "obj_count=$OBJ_COUNT" >> "$GITHUB_OUTPUT"
-          echo "so_count=$SO_COUNT" >> "$GITHUB_OUTPUT"
 
       - name: Checkpoint Compiled Objects to Staging Release (Compile -> Release -> Bounce)
         if: steps.compile.outputs.grounded != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ inputs.release_tag }}-staging
+          TAG: ${{ inputs.release_tag }}-${{ inputs.build_flavor }}-${{ inputs.target_cpu }}-staging
           BOUNCE_INDEX: ${{ inputs.bounce_index || '0' }}
         run: |
           cd /tmp/v8-work/v8
           mkdir -p /tmp/v8-stage
-          tar --zstd -cf "/tmp/v8-stage/v8-drop-${BOUNCE_INDEX}-objs.tar.zst" -C out/Component obj 2>/dev/null || \
-            tar -czf "/tmp/v8-stage/v8-drop-${BOUNCE_INDEX}-objs.tar.gz" -C out/Component obj
+          tar --zstd -cf "/tmp/v8-stage/v8-drop-${BOUNCE_INDEX}-objs.tar.zst" -C out/Build obj 2>/dev/null || \
+            tar -czf "/tmp/v8-stage/v8-drop-${BOUNCE_INDEX}-objs.tar.gz" -C out/Build obj
           ls -lh /tmp/v8-stage/
           gh release view "$TAG" >/dev/null 2>&1 || \
-            gh release create "$TAG" --prerelease --title "V8 Damped Gravity Staging (${{ inputs.release_tag }})" --notes "In-flight Damped Gravity compiled object checkpoints."
+            gh release create "$TAG" --prerelease --title "V8 Damped Gravity Staging (${TAG})" --notes "In-flight Damped Gravity compiled object checkpoints."
           gh release upload "$TAG" /tmp/v8-stage/* --clobber
 
       - name: Bounce Next Drop (Self-Dispatch on Free ubuntu-latest)
@@ -147,31 +181,38 @@ jobs:
         run: |
           NEXT=$((BOUNCE_INDEX + 1))
           if [ "$NEXT" -ge "$MAX_BOUNCES" ]; then
-            echo "[gravity] Reached max_bounces=${MAX_BOUNCES} — stopping safely (progress preserved in cache & staging release)."
+            echo "[gravity] Reached max_bounces=${MAX_BOUNCES} — stopping safely."
             exit 0
           fi
           echo "[gravity] Bouncing to Drop #${NEXT} of ${MAX_BOUNCES} (${{ steps.compile.outputs.obj_count }} .o files done so far)..."
           gh workflow run v8-gravity-compile.yml \
             -f release_tag="${{ inputs.release_tag }}" \
+            -f build_flavor="${{ inputs.build_flavor }}" \
+            -f target_cpu="${{ inputs.target_cpu }}" \
             -f bounce_index="$NEXT" \
             -f max_bounces="${{ inputs.max_bounces }}" \
             -f drop_seconds="${{ inputs.drop_seconds }}"
 
-      - name: Pack & Publish Grounded Upstream V8 Component Release
+      - name: Pack & Publish Grounded Upstream V8 Release (libv8_monolith or component + headers)
         if: steps.compile.outputs.grounded == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ inputs.release_tag }}
+          FLAVOR: ${{ inputs.build_flavor || 'lo-monolith' }}
+          TARGET_CPU: ${{ inputs.target_cpu || 'x64' }}
           BOUNCE_INDEX: ${{ inputs.bounce_index || '0' }}
         run: |
           mkdir -p /tmp/v8-dist
-          cd /tmp/v8-work/v8/out/Component
-          tar -czf /tmp/v8-dist/v8-shared-linux-x64.b8p libv8.so libv8_libbase.so libv8_libplatform.so *.so 2>/dev/null || \
-            tar -czf /tmp/v8-dist/v8-shared-linux-x64.b8p lib*.so
+          cd /tmp/v8-work/v8
+          tar -czf "/tmp/v8-dist/v8-include-${V8_SHA}.tar.gz" include
+          if [ "$FLAVOR" = "lo-monolith" ]; then
+            tar -czf "/tmp/v8-dist/libv8_monolith-linux-${TARGET_CPU}.tar.gz" -C out/Build/obj libv8_monolith.a
+          else
+            tar -czf "/tmp/v8-dist/v8-shared-linux-${TARGET_CPU}.b8p" -C out/Build lib*.so
+          fi
           cd /tmp/v8-dist
-          sha256sum * > SHA256SUMS.txt
+          sha256sum * > "SHA256SUMS-${FLAVOR}-${TARGET_CPU}.txt"
           ls -lh /tmp/v8-dist
-          gh release delete "$TAG" --yes 2>/dev/null || true
-          gh release create "$TAG" /tmp/v8-dist/* \
-            --title "Upstream V8 ${TAG} (${V8_SHA}) — Cloud-Compiled via Damped Gravity" \
-            --notes "Real upstream V8 (\`${V8_SHA}\`) component build (\`is_component_build = true\`) compiled on free \`ubuntu-latest\` across $((BOUNCE_INDEX + 1)) Damped Gravity drops."
+          gh release view "$TAG" >/dev/null 2>&1 || \
+            gh release create "$TAG" --title "Upstream V8 ${TAG} (${V8_SHA}) — Cloud-Compiled via Damped Gravity" --notes "Real upstream V8 (\`${V8_SHA}\`) built on free \`ubuntu-latest\` via Damped Gravity (supports both \`component\` shared libs and \`lo-monolith\` \`libv8_monolith.a\` + headers for \`just-js/lo\` & \`bun-neon-v8\`)."
+          gh release upload "$TAG" /tmp/v8-dist/* --clobber
