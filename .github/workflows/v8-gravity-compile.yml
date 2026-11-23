@@ -118,7 +118,7 @@ jobs:
         run: |
           PREV=$((PREV_IDX - 1))
           mkdir -p /tmp/v8-restore
-          if gh release download "$TAG" --pattern "v8-drop-${PREV}-objs.*" --dir /tmp/v8-restore --clobber 2>/dev/null; then
+          if gh release download "$TAG" --repo awesome-os/sectium-browser --pattern "v8-drop-${PREV}-objs.*" --dir /tmp/v8-restore --clobber 2>/dev/null; then
             echo "[gravity] Restoring compiled objects from staging release drop #${PREV}..."
             if [ -f "/tmp/v8-restore/v8-drop-${PREV}-objs.tar.zst" ]; then
               tar --zstd -xf "/tmp/v8-restore/v8-drop-${PREV}-objs.tar.zst" -C /tmp/v8-work/v8/out/Build
@@ -168,9 +168,9 @@ jobs:
           tar --zstd -cf "/tmp/v8-stage/v8-drop-${BOUNCE_INDEX}-objs.tar.zst" -C out/Build obj 2>/dev/null || \
             tar -czf "/tmp/v8-stage/v8-drop-${BOUNCE_INDEX}-objs.tar.gz" -C out/Build obj
           ls -lh /tmp/v8-stage/
-          gh release view "$TAG" >/dev/null 2>&1 || \
-            gh release create "$TAG" --prerelease --title "V8 Damped Gravity Staging (${TAG})" --notes "In-flight Damped Gravity compiled object checkpoints."
-          gh release upload "$TAG" /tmp/v8-stage/* --clobber
+          gh release view "$TAG" --repo awesome-os/sectium-browser >/dev/null 2>&1 || \
+            gh release create "$TAG" --repo awesome-os/sectium-browser --prerelease --title "V8 Damped Gravity Staging (${TAG})" --notes "In-flight Damped Gravity compiled object checkpoints."
+          gh release upload "$TAG" /tmp/v8-stage/* --repo awesome-os/sectium-browser --clobber
 
       - name: Bounce Next Drop (Self-Dispatch on Free ubuntu-latest)
         if: steps.compile.outputs.grounded != 'true'
@@ -185,7 +185,7 @@ jobs:
             exit 0
           fi
           echo "[gravity] Bouncing to Drop #${NEXT} of ${MAX_BOUNCES} (${{ steps.compile.outputs.obj_count }} .o files done so far)..."
-          gh workflow run v8-gravity-compile.yml \
+          gh workflow run v8-gravity-compile.yml --repo awesome-os/sectium-browser \
             -f release_tag="${{ inputs.release_tag }}" \
             -f build_flavor="${{ inputs.build_flavor }}" \
             -f target_cpu="${{ inputs.target_cpu }}" \
@@ -213,6 +213,6 @@ jobs:
           cd /tmp/v8-dist
           sha256sum * > "SHA256SUMS-${FLAVOR}-${TARGET_CPU}.txt"
           ls -lh /tmp/v8-dist
-          gh release view "$TAG" >/dev/null 2>&1 || \
-            gh release create "$TAG" --title "Upstream V8 ${TAG} (${V8_SHA}) — Cloud-Compiled via Damped Gravity" --notes "Real upstream V8 (\`${V8_SHA}\`) built on free \`ubuntu-latest\` via Damped Gravity (supports both \`component\` shared libs and \`lo-monolith\` \`libv8_monolith.a\` + headers for \`just-js/lo\` & \`bun-neon-v8\`)."
-          gh release upload "$TAG" /tmp/v8-dist/* --clobber
+          gh release view "$TAG" --repo awesome-os/sectium-browser >/dev/null 2>&1 || \
+            gh release create "$TAG" --repo awesome-os/sectium-browser --title "Upstream V8 ${TAG} (${V8_SHA}) — Cloud-Compiled via Damped Gravity" --notes "Real upstream V8 (\`${V8_SHA}\`) built on free \`ubuntu-latest\` via Damped Gravity (supports both \`component\` shared libs and \`lo-monolith\` \`libv8_monolith.a\` + headers for \`just-js/lo\` & \`bun-neon-v8\`)."
+          gh release upload "$TAG" /tmp/v8-dist/* --repo awesome-os/sectium-browser --clobber
