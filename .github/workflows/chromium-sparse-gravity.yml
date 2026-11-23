@@ -1,4 +1,4 @@
-name: Chromium Sparse + Standalone Shards (3-Trick Free Cloud Builder)
+name: Chromium Sparse + Parallel Standalone Shards (Free Cloud Builder)
 
 on:
   workflow_dispatch:
@@ -13,97 +13,11 @@ permissions:
   actions: write
 
 jobs:
-  chromium-sparse-lumi-overlay:
-    name: Trick 1 — Sparse Chromium src (~10 GB) + Lumi White Dragon Overlay
+  ensure-release:
+    name: Ensure Staging Release Exists
     runs-on: ubuntu-latest
     steps:
-      - name: Reclaim ~30 GB Free SSD on Free ubuntu-latest
-        run: |
-          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
-          df -h /
-
-      - name: Checkout sectium-browser (Lumi White Dragon Brand Pack)
-        uses: actions/checkout@v4
-
-      - name: Shallow Blobless Sparse Checkout of chromium/src (Strip Tests & Mobile/ChromeOS Bloat)
-        run: |
-          mkdir -p /tmp/chromium-sparse
-          cd /tmp/chromium-sparse
-          git clone --depth=1 --filter=blob:none --no-checkout https://chromium.googlesource.com/chromium/src.git src
-          cd src
-          git sparse-checkout init --no-cone
-          cat << 'EOF' > .git/info/sparse-checkout
-          /*
-          !/third_party/blink/web_tests/
-          !/chrome/test/
-          !/content/test/
-          !/media/test/
-          !/net/data/
-          !/ios/
-          !/android_webview/
-          !/ash/
-          !/chromeos/
-          !/fuchsia_web/
-          !/third_party/catapult/
-          !/third_party/devtools-frontend/
-          !/third_party/angle/src/tests/
-          !/third_party/skia/tests/
-          !/third_party/pdfium/testing/
-          !/components/test/
-          !/testing/
-          !/docs/
-          EOF
-          git checkout --quiet HEAD
-          CHROME_SHA=$(git rev-parse --short HEAD)
-          echo "[trick-1] Checked out sparse chromium/src @ $CHROME_SHA"
-          du -sh /tmp/chromium-sparse/src
-          df -h /
-
-      - name: Apply All 14 Lumi White Dragon Brand Replacements onto chromium/src
-        run: |
-          node -e "
-            const fs = require('fs');
-            const path = require('path');
-            const overlay = JSON.parse(fs.readFileSync('brand/lumi-white-dragon/chromium-brand-overlay.json', 'utf8'));
-            const srcRoot = '/tmp/chromium-sparse/src';
-            let applied = 0;
-            for (const [relTarget, relSrc] of Object.entries(overlay.chromium_theme_replacements)) {
-              const dst = path.join(srcRoot, relTarget);
-              fs.mkdirSync(path.dirname(dst), { recursive: true });
-              fs.copyFileSync(relSrc, dst);
-              applied++;
-            }
-            console.log('[lumi-overlay] Applied', applied, 'Lumi White Dragon files directly onto sparse chromium/src!');
-          "
-          git -C /tmp/chromium-sparse/src status --short
-
-  standalone-boringssl-shard:
-    name: Trick 2 — Independent Upstream BoringSSL Shard (libcrypto.so + libssl.so)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install Build Tools (cmake, ninja, clang, golang)
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq cmake ninja-build clang golang-go
-
-      - name: Shallow Clone & Compile Upstream Chromium BoringSSL (Shared Component .so)
-        run: |
-          git clone --depth=1 https://boringssl.googlesource.com/boringssl /tmp/boringssl
-          BSSL_SHA=$(git -C /tmp/boringssl rev-parse --short HEAD)
-          echo "BSSL_SHA=$BSSL_SHA" >> "$GITHUB_ENV"
-          cmake -G Ninja -S /tmp/boringssl -B /tmp/boringssl/build \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DBUILD_SHARED_LIBS=ON \
-            -DCMAKE_C_COMPILER=clang \
-            -DCMAKE_CXX_COMPILER=clang++
-          ninja -C /tmp/boringssl/build crypto ssl
-          mkdir -p /tmp/bssl-dist
-          cp /tmp/boringssl/build/libcrypto.so /tmp/boringssl/build/libssl.so /tmp/bssl-dist/
-          tar -czf "/tmp/bssl-dist/boringssl-shared-linux-x64.tar.gz" -C /tmp/bssl-dist libcrypto.so libssl.so
-          tar -czf "/tmp/bssl-dist/boringssl-include-${BSSL_SHA}.tar.gz" -C /tmp/boringssl include
-          cd /tmp/bssl-dist
-          sha256sum boringssl-shared-linux-x64.tar.gz "boringssl-include-${BSSL_SHA}.tar.gz" > SHA256SUMS-boringssl-x64.txt
-          ls -lh /tmp/bssl-dist
-
-      - name: Publish Standalone BoringSSL Shard to GitHub Release (Zero chromium/src Needed)
+      - name: Create Release If Missing
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ inputs.release_tag || 'v0.6.0-chromium-shards' }}
@@ -111,9 +25,109 @@ jobs:
           gh release view "$TAG" --repo awesome-os/sectium-browser >/dev/null 2>&1 || \
             gh release create "$TAG" --repo awesome-os/sectium-browser \
               --title "Chromium Independent Engine Shards (${TAG})" \
-              --notes "Independent Chromium C/C++ shared library shards compiled fresh on free \`ubuntu-latest\` via the 3-Trick Sparse + Standalone architecture (zero monolithic checkout required for final assembly)."
-          gh release upload "$TAG" \
-            /tmp/bssl-dist/boringssl-shared-linux-x64.tar.gz \
-            "/tmp/bssl-dist/boringssl-include-${BSSL_SHA}.tar.gz" \
-            /tmp/bssl-dist/SHA256SUMS-boringssl-x64.txt \
-            --repo awesome-os/sectium-browser --clobber
+              --notes "Independent Chromium C/C++ shared library shards compiled fresh in parallel on free \`ubuntu-latest\` (zero monolithic checkout required for final assembly)."
+
+  shard-boringssl:
+    needs: ensure-release
+    name: Shard 1 — BoringSSL (libcrypto.so + libssl.so)
+    runs-on: ubuntu-latest
+    steps:
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq cmake ninja-build clang golang-go
+      - name: Compile & Publish BoringSSL Shared Shard
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.release_tag || 'v0.6.0-chromium-shards' }}
+        run: |
+          git clone --depth=1 https://boringssl.googlesource.com/boringssl /tmp/boringssl
+          SHA=$(git -C /tmp/boringssl rev-parse --short HEAD)
+          cmake -G Ninja -S /tmp/boringssl -B /tmp/boringssl/build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+          ninja -C /tmp/boringssl/build crypto ssl
+          mkdir -p /tmp/dist
+          tar -czf /tmp/dist/boringssl-shared-linux-x64.tar.gz -C /tmp/boringssl/build libcrypto.so libssl.so
+          tar -czf "/tmp/dist/boringssl-include-${SHA}.tar.gz" -C /tmp/boringssl include
+          cd /tmp/dist && sha256sum *.tar.gz > SHA256SUMS-boringssl-x64.txt
+          gh release upload "$TAG" /tmp/dist/* --repo awesome-os/sectium-browser --clobber
+
+  shard-brotli:
+    needs: ensure-release
+    name: Shard 2 — Brotli (libbrotlidec.so + libbrotlienc.so)
+    runs-on: ubuntu-latest
+    steps:
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq cmake ninja-build clang
+      - name: Compile & Publish Brotli Shared Shard
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.release_tag || 'v0.6.0-chromium-shards' }}
+        run: |
+          git clone --depth=1 https://github.com/google/brotli.git /tmp/brotli
+          SHA=$(git -C /tmp/brotli rev-parse --short HEAD)
+          cmake -G Ninja -S /tmp/brotli -B /tmp/brotli/build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DBROTLI_DISABLE_TESTS=ON -DCMAKE_C_COMPILER=clang
+          ninja -C /tmp/brotli/build brotlicommon brotlidec brotlienc
+          mkdir -p /tmp/dist
+          tar -czf /tmp/dist/brotli-shared-linux-x64.tar.gz -C /tmp/brotli/build libbrotlicommon.so* libbrotlidec.so* libbrotlienc.so*
+          tar -czf "/tmp/dist/brotli-include-${SHA}.tar.gz" -C /tmp/brotli/c include
+          cd /tmp/dist && sha256sum *.tar.gz > SHA256SUMS-brotli-x64.txt
+          gh release upload "$TAG" /tmp/dist/* --repo awesome-os/sectium-browser --clobber
+
+  shard-webp:
+    needs: ensure-release
+    name: Shard 3 — libwebp (libwebp.so + libwebpdemux.so + libwebpmux.so)
+    runs-on: ubuntu-latest
+    steps:
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq cmake ninja-build clang
+      - name: Compile & Publish libwebp Shared Shard
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.release_tag || 'v0.6.0-chromium-shards' }}
+        run: |
+          git clone --depth=1 https://chromium.googlesource.com/webm/libwebp /tmp/libwebp
+          SHA=$(git -C /tmp/libwebp rev-parse --short HEAD)
+          cmake -G Ninja -S /tmp/libwebp -B /tmp/libwebp/build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DWEBP_BUILD_ANIM_UTILS=OFF -DWEBP_BUILD_CWEBP=OFF -DWEBP_BUILD_DWEBP=OFF -DWEBP_BUILD_GIF2WEBP=OFF -DWEBP_BUILD_IMG2WEBP=OFF -DWEBP_BUILD_VWEBP=OFF -DWEBP_BUILD_WEBPINFO=OFF -DWEBP_BUILD_WEBPMUX=OFF -DWEBP_BUILD_EXTRAS=OFF -DCMAKE_C_COMPILER=clang
+          ninja -C /tmp/libwebp/build webp webpdemux webpmux
+          mkdir -p /tmp/dist
+          tar -czf /tmp/dist/libwebp-shared-linux-x64.tar.gz -C /tmp/libwebp/build libwebp.so* libwebpdemux.so* libwebpmux.so* libsharpyuv.so*
+          tar -czf "/tmp/dist/libwebp-include-${SHA}.tar.gz" -C /tmp/libwebp/src webp
+          cd /tmp/dist && sha256sum *.tar.gz > SHA256SUMS-libwebp-x64.txt
+          gh release upload "$TAG" /tmp/dist/* --repo awesome-os/sectium-browser --clobber
+
+  shard-zlib-ng:
+    needs: ensure-release
+    name: Shard 4 — zlib-ng (libz.so SIMD-accelerated)
+    runs-on: ubuntu-latest
+    steps:
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq cmake ninja-build clang
+      - name: Compile & Publish zlib-ng Shared Shard
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.release_tag || 'v0.6.0-chromium-shards' }}
+        run: |
+          git clone --depth=1 https://github.com/zlib-ng/zlib-ng.git /tmp/zlib-ng
+          SHA=$(git -C /tmp/zlib-ng rev-parse --short HEAD)
+          cmake -G Ninja -S /tmp/zlib-ng -B /tmp/zlib-ng/build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DZLIB_COMPAT=ON -DZLIB_ENABLE_TESTS=OFF -DCMAKE_C_COMPILER=clang
+          ninja -C /tmp/zlib-ng/build zlib
+          mkdir -p /tmp/dist
+          tar -czf /tmp/dist/zlib-shared-linux-x64.tar.gz -C /tmp/zlib-ng/build libz.so*
+          tar -czf "/tmp/dist/zlib-include-${SHA}.tar.gz" -C /tmp/zlib-ng/build zlib.h zconf.h
+          cd /tmp/dist && sha256sum *.tar.gz > SHA256SUMS-zlib-x64.txt
+          gh release upload "$TAG" /tmp/dist/* --repo awesome-os/sectium-browser --clobber
+
+  shard-libpng:
+    needs: ensure-release
+    name: Shard 5 — libpng (libpng16.so)
+    runs-on: ubuntu-latest
+    steps:
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq cmake ninja-build clang zlib1g-dev
+      - name: Compile & Publish libpng Shared Shard
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.release_tag || 'v0.6.0-chromium-shards' }}
+        run: |
+          git clone --depth=1 https://github.com/pnggroup/libpng.git /tmp/libpng
+          SHA=$(git -C /tmp/libpng rev-parse --short HEAD)
+          cmake -G Ninja -S /tmp/libpng -B /tmp/libpng/build -DCMAKE_BUILD_TYPE=Release -DPNG_SHARED=ON -DPNG_STATIC=OFF -DPNG_TESTS=OFF -DCMAKE_C_COMPILER=clang
+          ninja -C /tmp/libpng/build png_shared
+          mkdir -p /tmp/dist
+          tar -czf /tmp/dist/libpng-shared-linux-x64.tar.gz -C /tmp/libpng/build libpng16.so*
+          tar -czf "/tmp/dist/libpng-include-${SHA}.tar.gz" -C /tmp/libpng png.h pngconf.h
+          cd /tmp/dist && sha256sum *.tar.gz > SHA256SUMS-libpng-x64.txt
+          gh release upload "$TAG" /tmp/dist/* --repo awesome-os/sectium-browser --clobber
