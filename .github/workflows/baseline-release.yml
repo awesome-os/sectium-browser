@@ -79,6 +79,24 @@ jobs:
             --pattern "0*.exe" \
             --dir dist-baseline --clobber
 
+          echo "Pulling fresh cloud-compiled upstream V8 (v0.6.0-v8-cloud) + 10-shard Ghost manifest (v0.6.0-chromium-shards)..."
+          gh release download "v0.6.0-v8-cloud" \
+            --repo awesome-os/sectium-browser \
+            --pattern "v8-shared-linux-x64.tar.gz" \
+            --pattern "v8-include-*.tar.gz" \
+            --dir dist-baseline --clobber || true
+          gh release download "v0.6.0-chromium-shards" \
+            --repo awesome-os/sectium-browser \
+            --pattern "ghost-shards-manifest.json" \
+            --dir dist-baseline --clobber || true
+
+          echo "Pulling 4-OS b8g-ghost stubs + SDK (awesome-os/b8g-ghost @ v0.1.0)..."
+          gh release download "v0.1.0" \
+            --repo awesome-os/b8g-ghost \
+            --pattern "ghost_sectium_display*" \
+            --pattern "b8g-ghost-sdk.tar.gz" \
+            --dir dist-baseline --clobber || true
+
           ls -lh dist-baseline
 
       - name: Package Lumi White Dragon Brand Pack & Emit RollingReleaseManifest.json

@@ -42,6 +42,12 @@ export interface RollingReleaseManifest {
     display_abi_lib: string;
     native_shim: string;
     runtime_binary: string;
+    ghost_registry: {
+      schema: 'b8g-ghost-registry-v1';
+      cas_layout: '<cas>/<sha256>/<filename>';
+      ghost_release_repo: 'awesome-os/b8g-ghost';
+      shards_manifest: 'ghost-shards-manifest.json';
+    };
   };
 }
 
@@ -154,6 +160,12 @@ export function buildRollingReleaseManifest(opts: {
       display_abi_lib: 'libsectium_display.dll',
       native_shim: 'b8g-shim.exe',
       runtime_binary: 'bun-neon-v8.exe',
+      ghost_registry: {
+        schema: 'b8g-ghost-registry-v1',
+        cas_layout: '<cas>/<sha256>/<filename>',
+        ghost_release_repo: 'awesome-os/b8g-ghost',
+        shards_manifest: 'ghost-shards-manifest.json',
+      },
     },
   };
 
