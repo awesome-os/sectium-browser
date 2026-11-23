@@ -1,0 +1,36 @@
+name: Sectium Browser CI — Security, Profiles, Split Shell & Upstream CAS
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test-browser:
+    name: Verify Browser Profiles, Hardening, Split Shell & CAS Manifest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sectium-browser
+        uses: actions/checkout@v4
+
+      - name: Setup Node 22+
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Restore Upstream Artifact Cache
+        uses: actions/cache@v4
+        with:
+          path: .sectium-cas
+          key: sectium-cas-${{ runner.os }}-v0.2.0-cas
+
+      - name: Fetch & Verify Upstream CAS Manifest (v0.2.0-cas)
+        run: |
+          mkdir -p .sectium-cas
+          curl -fsSL https://github.com/awesome-os/sectium-distributions/releases/download/v0.2.0-cas/cas-manifest.json -o .sectium-cas/cas-manifest.json
+          node -e "const m = JSON.parse(require('fs').readFileSync('.sectium-cas/cas-manifest.json','utf8')); console.log('Verified upstream CAS:', m.tag, 'artifacts:', m.artifacts.length); if (m.artifacts.length < 8) process.exit(1);"
+
+      - name: Run All Sectium Browser Unit & Security Suites
+        run: |
+          node --test installer/release-profile.test.mts installer/security-hardening.test.mts shell/virtual-frame-shell.test.mts
