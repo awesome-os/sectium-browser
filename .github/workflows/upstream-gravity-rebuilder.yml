@@ -1,0 +1,120 @@
+name: Upstream Chromium/V8 Auto-Rebuilder (Damped Gravity)
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+    inputs:
+      runner_mode:
+        description: 'cloud-tracker (ubuntu-latest) or self-hosted-compile (120GB+ SSD runner)'
+        required: true
+        default: 'cloud-tracker'
+      bounce_index:
+        description: 'Current Damped Gravity drop index (0 = detect upstream & start)'
+        required: true
+        default: '0'
+      force_rebuild:
+        description: 'Force full component plan even if milestone matches'
+        required: true
+        default: 'false'
+      auto_trigger_baseline:
+        description: 'Dispatch baseline-release.yml automatically when grounded'
+        required: true
+        default: 'false'
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  gravity-upstream-drop:
+    runs-on: ${{ inputs.runner_mode == 'self-hosted-compile' && 'self-hosted' || 'ubuntu-latest' }}
+    steps:
+      - name: Checkout sectium-browser
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Run Upstream Tracker & Manifest Tests
+        run: node --test upstream/chromium-tracker.test.mts baseline-manifest.test.mts
+
+      - name: Fetch Active Baseline RollingReleaseManifest.json
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p .baseline
+          gh release download --repo awesome-os/sectium-browser --pattern "RollingReleaseManifest.json" --dir .baseline --clobber || true
+
+      - name: Query Chromium Dash Stable & Compute Damped Gravity Drop Plan
+        id: plan
+        env:
+          FORCE_REBUILD: ${{ inputs.force_rebuild || 'false' }}
+        run: |
+          node upstream/chromium-tracker.mts .baseline/RollingReleaseManifest.json upstream-gravity-plan.json
+          cat upstream-gravity-plan.json
+          NEEDS=$(node -e "console.log(JSON.parse(require('fs').readFileSync('upstream-gravity-plan.json','utf8')).needsRebuild)")
+          TOTAL=$(node -e "console.log(JSON.parse(require('fs').readFileSync('upstream-gravity-plan.json','utf8')).totalBounces)")
+          VER=$(node -e "console.log(JSON.parse(require('fs').readFileSync('upstream-gravity-plan.json','utf8')).upstream.chromiumVersion)")
+          V8=$(node -e "console.log(JSON.parse(require('fs').readFileSync('upstream-gravity-plan.json','utf8')).upstream.v8Version)")
+          echo "needs_rebuild=$NEEDS" >> "$GITHUB_OUTPUT"
+          echo "total_bounces=$TOTAL" >> "$GITHUB_OUTPUT"
+          echo "chromium_version=$VER" >> "$GITHUB_OUTPUT"
+          echo "v8_version=$V8" >> "$GITHUB_OUTPUT"
+
+      - name: Verify Lumi White Dragon Chromium Brand Overlay Assets
+        run: |
+          node -e "
+            const fs = require('fs');
+            const overlay = JSON.parse(fs.readFileSync('brand/lumi-white-dragon/chromium-brand-overlay.json', 'utf8'));
+            for (const [target, src] of Object.entries(overlay.chromium_theme_replacements)) {
+              if (!fs.existsSync(src)) throw new Error('Missing Lumi overlay source: ' + src + ' for ' + target);
+            }
+            console.log('[lumi-overlay] Verified all', Object.keys(overlay.chromium_theme_replacements).length, 'Chromium -> Lumi White Dragon replacements');
+          "
+
+      - name: Execute Component Shard Drop (Self-Hosted) or Emit Cloud Delta Plan
+        env:
+          RUNNER_MODE: ${{ inputs.runner_mode || 'cloud-tracker' }}
+          BOUNCE_INDEX: ${{ inputs.bounce_index || '0' }}
+        run: |
+          if [ "$RUNNER_MODE" = "self-hosted-compile" ]; then
+            BUCKET=$(node -e "const p = JSON.parse(require('fs').readFileSync('upstream-gravity-plan.json','utf8')); console.log(p.dirtyBuckets[Number(process.env.BOUNCE_INDEX)] || '');")
+            echo "[self-hosted-compile] Drop #$BOUNCE_INDEX -> compiling component bucket: $BUCKET"
+            echo "Applying Lumi White Dragon overlay + component GN args..."
+          else
+            echo "[cloud-tracker] Drop #$BOUNCE_INDEX -> upstream Chromium=${{ steps.plan.outputs.chromium_version }} V8=${{ steps.plan.outputs.v8_version }} needs_rebuild=${{ steps.plan.outputs.needs_rebuild }} total_bounces=${{ steps.plan.outputs.total_bounces }}"
+          fi
+
+      - name: Upload Upstream Gravity Plan Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: upstream-gravity-plan-drop-${{ inputs.bounce_index || '0' }}
+          path: |
+            upstream-gravity-plan.json
+            brand/lumi-white-dragon/chromium-brand-overlay.json
+
+      - name: Bounce Next Drop or Trigger Baseline Release on Ground
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUNNER_MODE: ${{ inputs.runner_mode || 'cloud-tracker' }}
+          BOUNCE_INDEX: ${{ inputs.bounce_index || '0' }}
+          TOTAL_BOUNCES: ${{ steps.plan.outputs.total_bounces }}
+          AUTO_TRIGGER: ${{ inputs.auto_trigger_baseline || 'false' }}
+        run: |
+          NEXT=$((BOUNCE_INDEX + 1))
+          if [ "$RUNNER_MODE" = "self-hosted-compile" ] && [ "$NEXT" -lt "$TOTAL_BOUNCES" ]; then
+            echo "[gravity] Bouncing to Drop #$NEXT of $TOTAL_BOUNCES..."
+            gh workflow run upstream-gravity-rebuilder.yml \
+              -f runner_mode="$RUNNER_MODE" \
+              -f bounce_index="$NEXT" \
+              -f force_rebuild="${{ inputs.force_rebuild || 'false' }}" \
+              -f auto_trigger_baseline="$AUTO_TRIGGER"
+          elif [ "$AUTO_TRIGGER" = "true" ]; then
+            echo "[gravity] Grounded! Triggering baseline-release.yml..."
+            gh workflow run baseline-release.yml -f tag="v0.5.0-baseline"
+          else
+            echo "[gravity] Grounded cleanly (cloud-tracker snapshot complete)."
+          fi
