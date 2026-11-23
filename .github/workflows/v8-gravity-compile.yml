@@ -221,9 +221,9 @@ jobs:
           cd /tmp/v8-work/v8
           tar -czf "/tmp/v8-dist/v8-include-${V8_SHA}.tar.gz" include
           if [ "$FLAVOR" = "lo-monolith" ]; then
-            tar -czf "/tmp/v8-dist/libv8_monolith-linux-${TARGET_CPU}.tar.gz" -C out/Build/obj libv8_monolith.a
+            (cd out/Build/obj && tar -czf "/tmp/v8-dist/libv8_monolith-linux-${TARGET_CPU}.tar.gz" libv8_monolith.a)
           else
-            tar -czf "/tmp/v8-dist/v8-shared-linux-${TARGET_CPU}.tar.gz" -C out/Build lib*.so
+            (cd out/Build && tar -czf "/tmp/v8-dist/v8-shared-linux-${TARGET_CPU}.tar.gz" lib*.so)
           fi
           cd /tmp/v8-dist
           sha256sum * > "SHA256SUMS-${FLAVOR}-${TARGET_CPU}.txt"
