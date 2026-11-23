@@ -192,7 +192,7 @@ jobs:
           ninja -C /tmp/harfbuzz/build harfbuzz
           mkdir -p /tmp/dist
           (cd /tmp/harfbuzz/build && tar -czf /tmp/dist/harfbuzz-shared-linux-x64.tar.gz libharfbuzz.so*)
-          tar -czf "/tmp/dist/harfbuzz-include-${SHA}.tar.gz" -C /tmp/harfbuzz/src '*.h'
+          (cd /tmp/harfbuzz/src && tar -czf "/tmp/dist/harfbuzz-include-${SHA}.tar.gz" hb*.h)
           cd /tmp/dist && sha256sum *.tar.gz > SHA256SUMS-harfbuzz-x64.txt
           gh release upload "$TAG" /tmp/dist/* --repo awesome-os/sectium-browser --clobber
 
