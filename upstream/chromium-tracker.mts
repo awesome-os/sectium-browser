@@ -1,8 +1,9 @@
 /**
  * @file upstream/chromium-tracker.mts
  * @description Queries Chromium Dash Stable channel to detect upstream Chromium & V8 updates,
- * compares against the active Sectium Browser RollingReleaseManifest, and computes the
- * Damped Gravity Scheduler component bucket drop plan.
+ * compares against the active Sectium Browser RollingReleaseManifest, and computes an
+ * **Adaptive Damped Gravity** micro-shard drop plan that splits heavy Chromium subsystems
+ * into fast, bounded drops (`maxTusPerDrop`) and auto-splits further if a drop exceeds budget.
  *
  * Strictly zero external dependencies, `erasableSyntaxOnly: true`.
  */
@@ -18,27 +19,47 @@ export interface UpstreamReleaseInfo {
   readonly fetchedAt: string;
 }
 
+export interface ComponentBucketSpec {
+  readonly name: string;
+  readonly estimatedTus: number;
+  readonly ninjaTarget: string;
+}
+
+export interface GravityMicroShard {
+  readonly shardId: string;
+  readonly bucket: string;
+  readonly ninjaTarget: string;
+  readonly shardIndex: number;
+  readonly shardTotal: number;
+  readonly estimatedTus: number;
+}
+
 export interface GravityDropPlan {
-  readonly schema: 'sectium-upstream-gravity-plan-v1';
+  readonly schema: 'sectium-upstream-gravity-plan-v2';
   readonly upstream: UpstreamReleaseInfo;
   readonly currentBaselineMilestone: string;
   readonly currentBaselineV8: string;
   readonly needsRebuild: boolean;
   readonly reason: string;
+  readonly maxTusPerDrop: number;
+  readonly dampingFactor: number;
   readonly dirtyBuckets: readonly string[];
+  readonly microShards: readonly GravityMicroShard[];
   readonly totalBounces: number;
   readonly brandOverlay: 'brand/lumi-white-dragon/chromium-brand-overlay.json';
 }
 
-export const ALL_COMPONENT_BUCKETS = [
-  'v8-shared',
-  'base-core',
-  'net-stack',
-  'skia-gfx',
-  'blink-core',
-  'content-runtime',
-  'sectium-shell',
+export const CHROMIUM_COMPONENT_SPECS: readonly ComponentBucketSpec[] = [
+  { name: 'base-core', estimatedTus: 900, ninjaTarget: 'base' },
+  { name: 'v8-shared', estimatedTus: 1800, ninjaTarget: 'v8:v8_libbase v8:v8' },
+  { name: 'skia-gfx', estimatedTus: 1400, ninjaTarget: 'skia' },
+  { name: 'net-stack', estimatedTus: 1600, ninjaTarget: 'net' },
+  { name: 'content-runtime', estimatedTus: 4200, ninjaTarget: 'content/public/browser' },
+  { name: 'blink-core', estimatedTus: 6400, ninjaTarget: 'third_party/blink/renderer/core' },
+  { name: 'sectium-shell', estimatedTus: 400, ninjaTarget: 'chrome' },
 ] as const;
+
+export const ALL_COMPONENT_BUCKETS = CHROMIUM_COMPONENT_SPECS.map((s) => s.name);
 
 export async function fetchLatestChromiumStable(platform = 'Windows'): Promise<UpstreamReleaseInfo> {
   const url = `https://chromiumdash.appspot.com/fetch_releases?channel=Stable&platform=${encodeURIComponent(platform)}&num=1`;
@@ -67,12 +88,57 @@ export async function fetchLatestChromiumStable(platform = 'Windows'): Promise<U
   };
 }
 
+export function expandBucketsToMicroShards(
+  bucketNames: readonly string[],
+  maxTusPerDrop = 600
+): GravityMicroShard[] {
+  const cap = Math.max(50, Math.floor(maxTusPerDrop));
+  const shards: GravityMicroShard[] = [];
+  for (const name of bucketNames) {
+    const spec = CHROMIUM_COMPONENT_SPECS.find((s) => s.name === name);
+    if (!spec) continue;
+    const count = Math.max(1, Math.ceil(spec.estimatedTus / cap));
+    for (let i = 0; i < count; i++) {
+      const remaining = spec.estimatedTus - i * cap;
+      const tus = Math.min(cap, remaining);
+      const pad = String(i + 1).padStart(2, '0');
+      shards.push({
+        shardId: `${spec.name}#${pad}/${String(count).padStart(2, '0')}`,
+        bucket: spec.name,
+        ninjaTarget: spec.ninjaTarget,
+        shardIndex: i + 1,
+        shardTotal: count,
+        estimatedTus: tus,
+      });
+    }
+  }
+  return shards;
+}
+
+/**
+ * Adaptive damping: if a drop took longer than targetDropSeconds, shrink maxTusPerDrop
+ * proportionally (clamped to >= 100 TUs) so subsequent bounces finish faster and never time out.
+ */
+export function adaptMaxTusOnOverrun(
+  currentMaxTus: number,
+  observedSeconds: number,
+  targetDropSeconds: number
+): number {
+  if (observedSeconds <= targetDropSeconds || targetDropSeconds <= 0) {
+    return currentMaxTus;
+  }
+  const ratio = targetDropSeconds / observedSeconds;
+  return Math.max(100, Math.floor(currentMaxTus * Math.min(0.75, ratio)));
+}
+
 export function computeUpstreamGravityPlan(opts: {
   upstream: UpstreamReleaseInfo;
   currentMilestone: string;
   currentV8: string;
   forceRebuild?: boolean;
+  maxTusPerDrop?: number;
 }): GravityDropPlan {
+  const maxTusPerDrop = opts.maxTusPerDrop ?? 600;
   const curMajor = Number.parseInt(opts.currentMilestone.replace(/[^0-9].*$/, ''), 10) || 0;
   const milestoneChanged = opts.upstream.milestone > curMajor;
   const v8Changed = opts.upstream.v8Version !== opts.currentV8;
@@ -92,15 +158,20 @@ export function computeUpstreamGravityPlan(opts: {
     reason = `New upstream V8 ${opts.upstream.v8Version} (was ${opts.currentV8})`;
   }
 
+  const microShards = expandBucketsToMicroShards(dirtyBuckets, maxTusPerDrop);
+
   return {
-    schema: 'sectium-upstream-gravity-plan-v1',
+    schema: 'sectium-upstream-gravity-plan-v2',
     upstream: opts.upstream,
     currentBaselineMilestone: opts.currentMilestone,
     currentBaselineV8: opts.currentV8,
     needsRebuild,
     reason,
+    maxTusPerDrop,
+    dampingFactor: 0.65,
     dirtyBuckets,
-    totalBounces: dirtyBuckets.length,
+    microShards,
+    totalBounces: microShards.length,
     brandOverlay: 'brand/lumi-white-dragon/chromium-brand-overlay.json',
   };
 }
@@ -109,6 +180,7 @@ if (process.argv[1]?.endsWith('chromium-tracker.mts')) {
   const manifestPath = process.argv[2] ?? '';
   const outPath = process.argv[3] ?? 'upstream-gravity-plan.json';
   const force = process.env['FORCE_REBUILD'] === 'true';
+  const maxTus = Number.parseInt(process.env['MAX_TUS_PER_DROP'] ?? '600', 10) || 600;
 
   let currentMilestone = '146.x';
   let currentV8 = '16.0.88';
@@ -126,10 +198,11 @@ if (process.argv[1]?.endsWith('chromium-tracker.mts')) {
     currentMilestone,
     currentV8,
     forceRebuild: force,
+    maxTusPerDrop: maxTus,
   });
 
   writeFileSync(outPath, JSON.stringify(plan, null, 2) + '\n');
   console.log(
-    `[upstream-tracker] Upstream Chromium=${upstream.chromiumVersion} (V8=${upstream.v8Version}) | needsRebuild=${plan.needsRebuild} | dirtyBuckets=${plan.dirtyBuckets.length} | reason=${plan.reason}`
+    `[upstream-tracker] Upstream Chromium=${upstream.chromiumVersion} (V8=${upstream.v8Version}) | needsRebuild=${plan.needsRebuild} | dirtyBuckets=${plan.dirtyBuckets.length} | microShards=${plan.totalBounces} (maxTusPerDrop=${plan.maxTusPerDrop}) | reason=${plan.reason}`
   );
 }

@@ -13,6 +13,10 @@ on:
         description: 'Current Damped Gravity drop index (0 = detect upstream & start)'
         required: true
         default: '0'
+      max_tus_per_drop:
+        description: 'Max C++ translation units per fast micro-bounce (auto-splits heavy buckets)'
+        required: true
+        default: '600'
       force_rebuild:
         description: 'Force full component plan even if milestone matches'
         required: true
@@ -48,10 +52,11 @@ jobs:
           mkdir -p .baseline
           gh release download --repo awesome-os/sectium-browser --pattern "RollingReleaseManifest.json" --dir .baseline --clobber || true
 
-      - name: Query Chromium Dash Stable & Compute Damped Gravity Drop Plan
+      - name: Query Chromium Dash Stable & Compute Adaptive Micro-Shard Drop Plan
         id: plan
         env:
           FORCE_REBUILD: ${{ inputs.force_rebuild || 'false' }}
+          MAX_TUS_PER_DROP: ${{ inputs.max_tus_per_drop || '600' }}
         run: |
           node upstream/chromium-tracker.mts .baseline/RollingReleaseManifest.json upstream-gravity-plan.json
           cat upstream-gravity-plan.json
@@ -81,11 +86,11 @@ jobs:
           BOUNCE_INDEX: ${{ inputs.bounce_index || '0' }}
         run: |
           if [ "$RUNNER_MODE" = "self-hosted-compile" ]; then
-            BUCKET=$(node -e "const p = JSON.parse(require('fs').readFileSync('upstream-gravity-plan.json','utf8')); console.log(p.dirtyBuckets[Number(process.env.BOUNCE_INDEX)] || '');")
-            echo "[self-hosted-compile] Drop #$BOUNCE_INDEX -> compiling component bucket: $BUCKET"
+            SHARD=$(node -e "const p = JSON.parse(require('fs').readFileSync('upstream-gravity-plan.json','utf8')); const s = p.microShards[Number(process.env.BOUNCE_INDEX)]; console.log(s ? (s.shardId + ' [' + s.ninjaTarget + ', ' + s.estimatedTus + ' TUs]') : '');")
+            echo "[self-hosted-compile] Drop #$BOUNCE_INDEX -> compiling micro-shard: $SHARD"
             echo "Applying Lumi White Dragon overlay + component GN args..."
           else
-            echo "[cloud-tracker] Drop #$BOUNCE_INDEX -> upstream Chromium=${{ steps.plan.outputs.chromium_version }} V8=${{ steps.plan.outputs.v8_version }} needs_rebuild=${{ steps.plan.outputs.needs_rebuild }} total_bounces=${{ steps.plan.outputs.total_bounces }}"
+            echo "[cloud-tracker] Drop #$BOUNCE_INDEX -> upstream Chromium=${{ steps.plan.outputs.chromium_version }} V8=${{ steps.plan.outputs.v8_version }} needs_rebuild=${{ steps.plan.outputs.needs_rebuild }} micro_bounces=${{ steps.plan.outputs.total_bounces }}"
           fi
 
       - name: Upload Upstream Gravity Plan Artifact
@@ -110,6 +115,7 @@ jobs:
             gh workflow run upstream-gravity-rebuilder.yml \
               -f runner_mode="$RUNNER_MODE" \
               -f bounce_index="$NEXT" \
+              -f max_tus_per_drop="${{ inputs.max_tus_per_drop || '600' }}" \
               -f force_rebuild="${{ inputs.force_rebuild || 'false' }}" \
               -f auto_trigger_baseline="$AUTO_TRIGGER"
           elif [ "$AUTO_TRIGGER" = "true" ]; then
