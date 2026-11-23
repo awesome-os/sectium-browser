@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   build-v8-win64-component:
-    runs-on: windows-latest
+    runs-on: windows-2022
     steps:
       - name: Check Free Disk Space
         shell: pwsh

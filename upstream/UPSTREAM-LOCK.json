@@ -1,0 +1,95 @@
+{
+  "schema": "sectium-upstream-lock-v1",
+  "baseline_tag": "v0.6.0-baseline",
+  "ghost_registry_tag": "v0.6.0-chromium-shards",
+  "v8_cloud_tag": "v0.6.0-v8-cloud",
+  "brand_overlay": "brand/lumi-white-dragon/chromium-brand-overlay.json",
+  "policy": {
+    "vendor_raw_upstream_cpp_in_git": false,
+    "semantic_ast_diff_gate": "upstream/semantic-diff.mts",
+    "cas_layout": "<cas>/<sha256>/<filename>"
+  },
+  "upstreams": [
+    {
+      "name": "v8",
+      "repo": "https://chromium.googlesource.com/v8/v8.git",
+      "pinned_sha": "eaf3708a",
+      "mode": "component",
+      "outputs": ["libv8.so", "libv8_libbase.so", "libv8_libplatform.so", "v8.dll"],
+      "headers_tarball": "v8-include-eaf3708a.tar.gz",
+      "release_tag": "v0.6.0-v8-cloud"
+    },
+    {
+      "name": "boringssl",
+      "repo": "https://boringssl.googlesource.com/boringssl",
+      "pinned_sha": "289645a",
+      "outputs": ["libcrypto.so", "libssl.so"],
+      "headers_tarball": "boringssl-include-289645a.tar.gz",
+      "release_tag": "v0.6.0-chromium-shards"
+    },
+    {
+      "name": "brotli",
+      "repo": "https://github.com/google/brotli.git",
+      "pinned_sha": "fed075f",
+      "outputs": ["libbrotlicommon.so", "libbrotlidec.so", "libbrotlienc.so"],
+      "headers_tarball": "brotli-include-fed075f.tar.gz",
+      "release_tag": "v0.6.0-chromium-shards"
+    },
+    {
+      "name": "libwebp",
+      "repo": "https://chromium.googlesource.com/webm/libwebp",
+      "pinned_sha": "f054d0c",
+      "outputs": ["libwebp.so", "libwebpdemux.so", "libsharpyuv.so"],
+      "headers_tarball": "libwebp-include-f054d0c.tar.gz",
+      "release_tag": "v0.6.0-chromium-shards"
+    },
+    {
+      "name": "zlib-ng",
+      "repo": "https://github.com/zlib-ng/zlib-ng.git",
+      "pinned_sha": "bc98d84",
+      "outputs": ["libz.so"],
+      "headers_tarball": "zlib-include-bc98d84.tar.gz",
+      "release_tag": "v0.6.0-chromium-shards"
+    },
+    {
+      "name": "libpng",
+      "repo": "https://github.com/pnggroup/libpng.git",
+      "pinned_sha": "73a6865",
+      "outputs": ["libpng18.so"],
+      "headers_tarball": "libpng-include-73a6865.tar.gz",
+      "release_tag": "v0.6.0-chromium-shards"
+    },
+    {
+      "name": "sqlite3",
+      "repo": "https://www.sqlite.org/2025/sqlite-amalgamation-3490100.zip",
+      "pinned_sha": "3490100",
+      "outputs": ["libsqlite3.so"],
+      "headers_tarball": "sqlite3-include-3490100.tar.gz",
+      "release_tag": "v0.6.0-chromium-shards"
+    },
+    {
+      "name": "freetype",
+      "repo": "https://gitlab.freedesktop.org/freetype/freetype.git",
+      "outputs": ["libfreetype.so"],
+      "release_tag": "v0.6.0-chromium-shards"
+    },
+    {
+      "name": "harfbuzz",
+      "repo": "https://github.com/harfbuzz/harfbuzz.git",
+      "outputs": ["libharfbuzz.so"],
+      "release_tag": "v0.6.0-chromium-shards"
+    },
+    {
+      "name": "libjpeg-turbo",
+      "repo": "https://github.com/libjpeg-turbo/libjpeg-turbo.git",
+      "outputs": ["libjpeg.so", "libturbojpeg.so"],
+      "release_tag": "v0.6.0-chromium-shards"
+    },
+    {
+      "name": "expat",
+      "repo": "https://github.com/libexpat/libexpat.git",
+      "outputs": ["libexpat.so"],
+      "release_tag": "v0.6.0-chromium-shards"
+    }
+  ]
+}
