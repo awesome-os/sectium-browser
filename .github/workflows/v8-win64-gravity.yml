@@ -53,6 +53,7 @@ jobs:
           treat_warnings_as_errors = false
           symbol_level = 0
           v8_enable_sandbox = true
+          use_clang_modules = false
           "@ | Set-Content -Path out\Component\args.gn -Encoding Ascii
           gn gen out/Component
 
