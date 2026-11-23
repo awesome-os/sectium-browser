@@ -126,6 +126,12 @@ jobs:
               tar -xzf "/tmp/v8-restore/v8-drop-${PREV}-objs.tar.gz" -C /tmp/v8-work/v8/out/Build
             fi
           fi
+          # Critical: advance mtime of restored objects/outputs past freshly fetched source timestamps so Ninja skips them!
+          if [ -d /tmp/v8-work/v8/out/Build/obj ]; then
+            find /tmp/v8-work/v8/out/Build/obj -type f -exec touch {} +
+            find /tmp/v8-work/v8/out/Build -maxdepth 1 \( -name '*.so' -o -name '*.a' \) -exec touch {} +
+            echo "[gravity] Advanced mtime on $(find /tmp/v8-work/v8/out/Build/obj -name '*.o' | wc -l) restored .o files"
+          fi
 
       - name: Bounded Damped Gravity Compile Drop (timeout ${{ inputs.drop_seconds }}s ninja)
         id: compile
