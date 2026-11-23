@@ -126,9 +126,14 @@ jobs:
               tar -xzf "/tmp/v8-restore/v8-drop-${PREV}-objs.tar.gz" -C /tmp/v8-work/v8/out/Build
             fi
           fi
-          # Critical: advance mtime of restored objects/outputs past freshly fetched source timestamps so Ninja skips them!
+          # Critical: preserve strict mtime ordering (src < gen < obj < .so) so Ninja skips all cached codegen & .o files!
+          if [ -d /tmp/v8-work/v8/out/Build/gen ]; then
+            find /tmp/v8-work/v8/out/Build/gen -type f -exec touch {} +
+            sleep 1
+          fi
           if [ -d /tmp/v8-work/v8/out/Build/obj ]; then
             find /tmp/v8-work/v8/out/Build/obj -type f -exec touch {} +
+            sleep 1
             find /tmp/v8-work/v8/out/Build -maxdepth 1 \( -name '*.so' -o -name '*.a' \) -exec touch {} +
             echo "[gravity] Advanced mtime on $(find /tmp/v8-work/v8/out/Build/obj -name '*.o' | wc -l) restored .o files"
           fi
@@ -171,8 +176,12 @@ jobs:
         run: |
           cd /tmp/v8-work/v8
           mkdir -p /tmp/v8-stage
-          tar --zstd -cf "/tmp/v8-stage/v8-drop-${BOUNCE_INDEX}-objs.tar.zst" -C out/Build obj 2>/dev/null || \
-            tar -czf "/tmp/v8-stage/v8-drop-${BOUNCE_INDEX}-objs.tar.gz" -C out/Build obj
+          ITEMS="obj"
+          [ -d out/Build/gen ] && ITEMS="$ITEMS gen"
+          [ -f out/Build/.ninja_log ] && ITEMS="$ITEMS .ninja_log"
+          [ -f out/Build/.ninja_deps ] && ITEMS="$ITEMS .ninja_deps"
+          tar --zstd -cf "/tmp/v8-stage/v8-drop-${BOUNCE_INDEX}-objs.tar.zst" -C out/Build $ITEMS 2>/dev/null || \
+            tar -czf "/tmp/v8-stage/v8-drop-${BOUNCE_INDEX}-objs.tar.gz" -C out/Build $ITEMS
           ls -lh /tmp/v8-stage/
           gh release view "$TAG" --repo awesome-os/sectium-browser >/dev/null 2>&1 || \
             gh release create "$TAG" --repo awesome-os/sectium-browser --prerelease --title "V8 Damped Gravity Staging (${TAG})" --notes "In-flight Damped Gravity compiled object checkpoints."
