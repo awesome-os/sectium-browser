@@ -38,6 +38,11 @@ jobs:
           $env:PATH = "D:\v8-work\depot_tools;$env:PATH"
           $env:DEPOT_TOOLS_WIN_TOOLCHAIN = "0"
           Set-Location D:\v8-work\v8
+          # Auto-align setup_toolchain.py SDK version to the exact Windows Kit installed on windows-2022
+          $installedSdk = (Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\Include" -Directory | Where-Object { Test-Path (Join-Path $_.FullName "um") } | Sort-Object Name -Descending | Select-Object -First 1).Name
+          Write-Host "[v8-win64] Using installed Windows SDK: $installedSdk"
+          $stPath = "build\toolchain\win\setup_toolchain.py"
+          (Get-Content $stPath -Raw) -replace '10\.0\.\d+\.\d+', $installedSdk | Set-Content $stPath -NoNewline
           New-Item -ItemType Directory -Force -Path out\Component | Out-Null
           @"
           is_component_build = true
