@@ -153,3 +153,125 @@ jobs:
           tar -czf /tmp/dist/sqlite3-include-3490100.tar.gz -C "$DIR" sqlite3.h sqlite3ext.h
           cd /tmp/dist && sha256sum sqlite3-*.tar.gz > SHA256SUMS-sqlite3-x64.txt
           gh release upload "$TAG" /tmp/dist/sqlite3-*.tar.gz /tmp/dist/SHA256SUMS-sqlite3-x64.txt --repo awesome-os/sectium-browser --clobber
+
+  shard-freetype:
+    needs: ensure-release
+    name: Shard 7 — FreeType (libfreetype.so)
+    runs-on: ubuntu-latest
+    steps:
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq cmake ninja-build clang zlib1g-dev
+      - name: Compile & Publish FreeType Shared Shard
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.release_tag || 'v0.6.0-chromium-shards' }}
+        run: |
+          git clone --depth=1 https://gitlab.freedesktop.org/freetype/freetype.git /tmp/freetype
+          SHA=$(git -C /tmp/freetype rev-parse --short HEAD)
+          cmake -G Ninja -S /tmp/freetype -B /tmp/freetype/build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DFT_DISABLE_HARFBUZZ=ON -DFT_DISABLE_BZIP2=ON -DFT_DISABLE_BROTLI=ON -DFT_DISABLE_PNG=ON -DCMAKE_C_COMPILER=clang
+          ninja -C /tmp/freetype/build freetype
+          mkdir -p /tmp/dist
+          (cd /tmp/freetype/build && tar -czf /tmp/dist/freetype-shared-linux-x64.tar.gz libfreetype.so*)
+          tar -czf "/tmp/dist/freetype-include-${SHA}.tar.gz" -C /tmp/freetype include
+          cd /tmp/dist && sha256sum *.tar.gz > SHA256SUMS-freetype-x64.txt
+          gh release upload "$TAG" /tmp/dist/* --repo awesome-os/sectium-browser --clobber
+
+  shard-harfbuzz:
+    needs: ensure-release
+    name: Shard 8 — HarfBuzz (libharfbuzz.so)
+    runs-on: ubuntu-latest
+    steps:
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq cmake ninja-build clang
+      - name: Compile & Publish HarfBuzz Shared Shard
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.release_tag || 'v0.6.0-chromium-shards' }}
+        run: |
+          git clone --depth=1 https://github.com/harfbuzz/harfbuzz.git /tmp/harfbuzz
+          SHA=$(git -C /tmp/harfbuzz rev-parse --short HEAD)
+          cmake -G Ninja -S /tmp/harfbuzz -B /tmp/harfbuzz/build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DHB_BUILD_TESTS=OFF -DHB_BUILD_UTILS=OFF -DHB_BUILD_SUBSET=OFF -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+          ninja -C /tmp/harfbuzz/build harfbuzz
+          mkdir -p /tmp/dist
+          (cd /tmp/harfbuzz/build && tar -czf /tmp/dist/harfbuzz-shared-linux-x64.tar.gz libharfbuzz.so*)
+          tar -czf "/tmp/dist/harfbuzz-include-${SHA}.tar.gz" -C /tmp/harfbuzz/src '*.h'
+          cd /tmp/dist && sha256sum *.tar.gz > SHA256SUMS-harfbuzz-x64.txt
+          gh release upload "$TAG" /tmp/dist/* --repo awesome-os/sectium-browser --clobber
+
+  shard-libjpeg-turbo:
+    needs: ensure-release
+    name: Shard 9 — libjpeg-turbo (libjpeg.so + libturbojpeg.so SIMD)
+    runs-on: ubuntu-latest
+    steps:
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq cmake ninja-build clang nasm
+      - name: Compile & Publish libjpeg-turbo Shared Shard
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.release_tag || 'v0.6.0-chromium-shards' }}
+        run: |
+          git clone --depth=1 https://github.com/libjpeg-turbo/libjpeg-turbo.git /tmp/libjpeg-turbo
+          SHA=$(git -C /tmp/libjpeg-turbo rev-parse --short HEAD)
+          cmake -G Ninja -S /tmp/libjpeg-turbo -B /tmp/libjpeg-turbo/build -DCMAKE_BUILD_TYPE=Release -DENABLE_SHARED=ON -DENABLE_STATIC=OFF -DWITH_TURBOJPEG=ON -DCMAKE_C_COMPILER=clang
+          ninja -C /tmp/libjpeg-turbo/build jpeg turbojpeg
+          mkdir -p /tmp/dist
+          (cd /tmp/libjpeg-turbo/build && tar -czf /tmp/dist/libjpeg-turbo-shared-linux-x64.tar.gz libjpeg.so* libturbojpeg.so*)
+          (cd /tmp/libjpeg-turbo/src && tar -czf "/tmp/dist/libjpeg-turbo-include-${SHA}.tar.gz" jpeglib.h turbojpeg.h jerror.h jmorecfg.h)
+          cd /tmp/dist && sha256sum *.tar.gz > SHA256SUMS-libjpeg-turbo-x64.txt
+          gh release upload "$TAG" /tmp/dist/* --repo awesome-os/sectium-browser --clobber
+
+  shard-expat:
+    needs: ensure-release
+    name: Shard 10 — Expat (libexpat.so)
+    runs-on: ubuntu-latest
+    steps:
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq cmake ninja-build clang
+      - name: Compile & Publish Expat Shared Shard
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.release_tag || 'v0.6.0-chromium-shards' }}
+        run: |
+          git clone --depth=1 https://github.com/libexpat/libexpat.git /tmp/libexpat
+          SHA=$(git -C /tmp/libexpat rev-parse --short HEAD)
+          cmake -G Ninja -S /tmp/libexpat/expat -B /tmp/libexpat/build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DEXPAT_BUILD_TESTS=OFF -DEXPAT_BUILD_EXAMPLES=OFF -DEXPAT_BUILD_TOOLS=OFF -DCMAKE_C_COMPILER=clang
+          ninja -C /tmp/libexpat/build expat
+          mkdir -p /tmp/dist
+          (cd /tmp/libexpat/build && tar -czf /tmp/dist/expat-shared-linux-x64.tar.gz libexpat.so*)
+          (cd /tmp/libexpat/expat/lib && tar -czf "/tmp/dist/expat-include-${SHA}.tar.gz" expat.h expat_external.h)
+          cd /tmp/dist && sha256sum *.tar.gz > SHA256SUMS-expat-x64.txt
+          gh release upload "$TAG" /tmp/dist/* --repo awesome-os/sectium-browser --clobber
+
+  emit-ghost-registry-manifest:
+    needs: [shard-boringssl, shard-brotli, shard-webp, shard-zlib-ng, shard-libpng, shard-sqlite3, shard-freetype, shard-harfbuzz, shard-libjpeg-turbo, shard-expat]
+    name: Emit Unified GhostModuleRegistry Manifest (All 10 Shards)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Aggregate SHA256SUMS into ghost-shards-manifest.json
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.release_tag || 'v0.6.0-chromium-shards' }}
+        run: |
+          mkdir -p /tmp/sums
+          gh release download "$TAG" --repo awesome-os/sectium-browser --pattern "SHA256SUMS-*.txt" --dir /tmp/sums --clobber
+          node -e "
+            const fs = require('fs');
+            const path = require('path');
+            const tag = process.env.TAG;
+            const entries = [];
+            for (const f of fs.readdirSync('/tmp/sums').sort()) {
+              for (const line of fs.readFileSync(path.join('/tmp/sums', f), 'utf8').trim().split('\n')) {
+                const [sha256, filename] = line.trim().split(/\s+/);
+                if (!sha256 || !filename) continue;
+                entries.push({
+                  filename,
+                  sha256,
+                  kind: filename.includes('-include-') ? 'headers' : 'shared-lib',
+                  download_url: 'https://github.com/awesome-os/sectium-browser/releases/download/' + tag + '/' + filename
+                });
+              }
+            }
+            const manifest = { schema: 'b8g-ghost-registry-v1', tag, total_artifacts: entries.length, artifacts: entries };
+            fs.writeFileSync('/tmp/ghost-shards-manifest.json', JSON.stringify(manifest, null, 2) + '\n');
+            console.log('[ghost-registry] Emitted manifest with', entries.length, 'verified SHA-256 shard artifacts');
+          "
+          gh release upload "$TAG" /tmp/ghost-shards-manifest.json --repo awesome-os/sectium-browser --clobber
