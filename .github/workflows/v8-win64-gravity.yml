@@ -1,0 +1,75 @@
+name: V8 Upstream Win64 — Fresh Cloud Component Build (v8.dll on Free windows-latest)
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Target release tag to upload v8-shared-win64.zip'
+        required: true
+        default: 'v0.6.0-v8-cloud'
+
+permissions:
+  contents: write
+
+jobs:
+  build-v8-win64-component:
+    runs-on: windows-latest
+    steps:
+      - name: Check Free Disk Space
+        shell: pwsh
+        run: Get-PSDrive C, D -ErrorAction SilentlyContinue | Format-Table Name, Used, Free -AutoSize
+
+      - name: Setup depot_tools & Shallow Upstream V8 Source
+        shell: cmd
+        run: |
+          mkdir D:\v8-work
+          cd /d D:\v8-work
+          git clone --depth=1 https://chromium.googlesource.com/chromium/tools/depot_tools.git
+          set PATH=D:\v8-work\depot_tools;%PATH%
+          set DEPOT_TOOLS_WIN_TOOLCHAIN=0
+          call gclient --version
+          call fetch --no-history v8
+          cd /d D:\v8-work\v8
+          for /f %%i in ('git rev-parse --short HEAD') do echo V8_SHA=%%i>> %GITHUB_ENV%
+
+      - name: Configure Win64 Component Build GN Args (v8.dll + v8_libbase.dll + v8_libplatform.dll)
+        shell: pwsh
+        run: |
+          $env:PATH = "D:\v8-work\depot_tools;$env:PATH"
+          $env:DEPOT_TOOLS_WIN_TOOLCHAIN = "0"
+          Set-Location D:\v8-work\v8
+          New-Item -ItemType Directory -Force -Path out\Component | Out-Null
+          @"
+          is_component_build = true
+          is_debug = false
+          target_cpu = "x64"
+          v8_monolithic = false
+          v8_use_external_startup_data = false
+          treat_warnings_as_errors = false
+          symbol_level = 0
+          v8_enable_sandbox = true
+          "@ | Set-Content -Path out\Component\args.gn -Encoding Ascii
+          gn gen out/Component
+
+      - name: Compile Upstream Win64 V8 Component DLLs
+        shell: cmd
+        run: |
+          set PATH=D:\v8-work\depot_tools;%PATH%
+          set DEPOT_TOOLS_WIN_TOOLCHAIN=0
+          cd /d D:\v8-work\v8
+          ninja -C out/Component v8_libbase v8_libplatform v8
+
+      - name: Pack & Upload v8-shared-win64.zip to GitHub Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.release_tag || 'v0.6.0-v8-cloud' }}
+        run: |
+          New-Item -ItemType Directory -Force -Path D:\v8-dist | Out-Null
+          $outDir = "D:\v8-work\v8\out\Component"
+          $files = Get-ChildItem $outDir -File | Where-Object { $_.Name -match '\.(dll|dll\.lib)$' }
+          $files | Select-Object Name, Length | Format-Table -AutoSize
+          Compress-Archive -Path ($files.FullName) -DestinationPath "D:\v8-dist\v8-shared-win64.zip" -Force
+          $hash = (Get-FileHash -Algorithm SHA256 "D:\v8-dist\v8-shared-win64.zip").Hash.ToLowerInvariant()
+          "$hash  v8-shared-win64.zip" | Set-Content "D:\v8-dist\SHA256SUMS-component-win64.txt" -Encoding Ascii
+          gh release upload $env:TAG "D:\v8-dist\v8-shared-win64.zip" "D:\v8-dist\SHA256SUMS-component-win64.txt" --repo awesome-os/sectium-browser --clobber
