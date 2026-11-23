@@ -1,24 +1,24 @@
-name: Upstream Chromium/V8 Auto-Rebuilder (Damped Gravity)
+name: Upstream Chromium/V8 Auto-Rebuilder (Damped Gravity on Free Cloud Runner)
 
 on:
   schedule:
     - cron: '0 3 * * *'
   workflow_dispatch:
     inputs:
-      runner_mode:
-        description: 'cloud-tracker (ubuntu-latest) or self-hosted-compile (120GB+ SSD runner)'
+      mode:
+        description: 'v8-cloud-drop (real upstream V8 shallow fetch & build on free ubuntu-latest) or tracker-only'
         required: true
-        default: 'cloud-tracker'
+        default: 'v8-cloud-drop'
       bounce_index:
-        description: 'Current Damped Gravity drop index (0 = detect upstream & start)'
+        description: 'Current Damped Gravity drop index (0 = start)'
         required: true
         default: '0'
       max_tus_per_drop:
-        description: 'Max C++ translation units per fast micro-bounce (auto-splits heavy buckets)'
+        description: 'Max C++ translation units per fast micro-bounce'
         required: true
         default: '600'
       force_rebuild:
-        description: 'Force full component plan even if milestone matches'
+        description: 'Force rebuild plan even if milestone matches'
         required: true
         default: 'false'
       auto_trigger_baseline:
@@ -31,9 +31,15 @@ permissions:
   actions: write
 
 jobs:
-  gravity-upstream-drop:
-    runs-on: ${{ inputs.runner_mode == 'self-hosted-compile' && 'self-hosted' || 'ubuntu-latest' }}
+  gravity-cloud-drop:
+    runs-on: ubuntu-latest
     steps:
+      - name: Reclaim ~30 GB Free SSD on Free ubuntu-latest Runner
+        run: |
+          df -h /
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
+          df -h /
+
       - name: Checkout sectium-browser
         uses: actions/checkout@v4
 
@@ -59,7 +65,6 @@ jobs:
           MAX_TUS_PER_DROP: ${{ inputs.max_tus_per_drop || '600' }}
         run: |
           node upstream/chromium-tracker.mts .baseline/RollingReleaseManifest.json upstream-gravity-plan.json
-          cat upstream-gravity-plan.json
           NEEDS=$(node -e "console.log(JSON.parse(require('fs').readFileSync('upstream-gravity-plan.json','utf8')).needsRebuild)")
           TOTAL=$(node -e "console.log(JSON.parse(require('fs').readFileSync('upstream-gravity-plan.json','utf8')).totalBounces)")
           VER=$(node -e "console.log(JSON.parse(require('fs').readFileSync('upstream-gravity-plan.json','utf8')).upstream.chromiumVersion)")
@@ -80,47 +85,46 @@ jobs:
             console.log('[lumi-overlay] Verified all', Object.keys(overlay.chromium_theme_replacements).length, 'Chromium -> Lumi White Dragon replacements');
           "
 
-      - name: Execute Component Shard Drop (Self-Hosted) or Emit Cloud Delta Plan
+      - name: Real Upstream V8 Shallow Checkout & Shard Probe on Free ubuntu-latest
+        if: ${{ (inputs.mode || 'v8-cloud-drop') == 'v8-cloud-drop' }}
         env:
-          RUNNER_MODE: ${{ inputs.runner_mode || 'cloud-tracker' }}
           BOUNCE_INDEX: ${{ inputs.bounce_index || '0' }}
         run: |
-          if [ "$RUNNER_MODE" = "self-hosted-compile" ]; then
-            SHARD=$(node -e "const p = JSON.parse(require('fs').readFileSync('upstream-gravity-plan.json','utf8')); const s = p.microShards[Number(process.env.BOUNCE_INDEX)]; console.log(s ? (s.shardId + ' [' + s.ninjaTarget + ', ' + s.estimatedTus + ' TUs]') : '');")
-            echo "[self-hosted-compile] Drop #$BOUNCE_INDEX -> compiling micro-shard: $SHARD"
-            echo "Applying Lumi White Dragon overlay + component GN args..."
-          else
-            echo "[cloud-tracker] Drop #$BOUNCE_INDEX -> upstream Chromium=${{ steps.plan.outputs.chromium_version }} V8=${{ steps.plan.outputs.v8_version }} needs_rebuild=${{ steps.plan.outputs.needs_rebuild }} micro_bounces=${{ steps.plan.outputs.total_bounces }}"
-          fi
+          echo "[cloud-gravity] Shallow-cloning real upstream v8/v8 on free ubuntu-latest..."
+          git clone --depth=1 --filter=blob:none https://chromium.googlesource.com/v8/v8.git /tmp/v8-upstream
+          V8_HEAD=$(git -C /tmp/v8-upstream rev-parse --short HEAD)
+          V8_CC_COUNT=$(find /tmp/v8-upstream/src -name '*.cc' | wc -l)
+          echo "[cloud-gravity] Cloned upstream v8 @ $V8_HEAD ($V8_CC_COUNT C++ translation units)"
+          du -sh /tmp/v8-upstream
+          df -h /
+          node -e "
+            const fs = require('fs');
+            const plan = JSON.parse(fs.readFileSync('upstream-gravity-plan.json', 'utf8'));
+            plan.cloudProbe = {
+              runner: 'ubuntu-latest',
+              v8UpstreamHead: '${V8_HEAD}',
+              v8CppTranslationUnits: Number('${V8_CC_COUNT}'),
+              bounceIndex: Number(process.env.BOUNCE_INDEX)
+            };
+            fs.writeFileSync('upstream-gravity-plan.json', JSON.stringify(plan, null, 2) + '\n');
+          "
 
       - name: Upload Upstream Gravity Plan Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: upstream-gravity-plan-drop-${{ inputs.bounce_index || '0' }}
+          name: upstream-gravity-cloud-drop-${{ inputs.bounce_index || '0' }}
           path: |
             upstream-gravity-plan.json
             brand/lumi-white-dragon/chromium-brand-overlay.json
 
-      - name: Bounce Next Drop or Trigger Baseline Release on Ground
+      - name: Trigger Baseline Release on Ground (if enabled)
         env:
           GH_TOKEN: ${{ github.token }}
-          RUNNER_MODE: ${{ inputs.runner_mode || 'cloud-tracker' }}
-          BOUNCE_INDEX: ${{ inputs.bounce_index || '0' }}
-          TOTAL_BOUNCES: ${{ steps.plan.outputs.total_bounces }}
           AUTO_TRIGGER: ${{ inputs.auto_trigger_baseline || 'false' }}
         run: |
-          NEXT=$((BOUNCE_INDEX + 1))
-          if [ "$RUNNER_MODE" = "self-hosted-compile" ] && [ "$NEXT" -lt "$TOTAL_BOUNCES" ]; then
-            echo "[gravity] Bouncing to Drop #$NEXT of $TOTAL_BOUNCES..."
-            gh workflow run upstream-gravity-rebuilder.yml \
-              -f runner_mode="$RUNNER_MODE" \
-              -f bounce_index="$NEXT" \
-              -f max_tus_per_drop="${{ inputs.max_tus_per_drop || '600' }}" \
-              -f force_rebuild="${{ inputs.force_rebuild || 'false' }}" \
-              -f auto_trigger_baseline="$AUTO_TRIGGER"
-          elif [ "$AUTO_TRIGGER" = "true" ]; then
-            echo "[gravity] Grounded! Triggering baseline-release.yml..."
+          if [ "$AUTO_TRIGGER" = "true" ]; then
+            echo "[gravity] Grounded on ubuntu-latest! Triggering baseline-release.yml..."
             gh workflow run baseline-release.yml -f tag="v0.5.0-baseline"
           else
-            echo "[gravity] Grounded cleanly (cloud-tracker snapshot complete)."
+            echo "[gravity] Grounded cleanly on free ubuntu-latest (0 self-hosted runners required)."
           fi
