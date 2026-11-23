@@ -208,7 +208,7 @@ jobs:
           if [ "$FLAVOR" = "lo-monolith" ]; then
             tar -czf "/tmp/v8-dist/libv8_monolith-linux-${TARGET_CPU}.tar.gz" -C out/Build/obj libv8_monolith.a
           else
-            tar -czf "/tmp/v8-dist/v8-shared-linux-${TARGET_CPU}.b8p" -C out/Build lib*.so
+            tar -czf "/tmp/v8-dist/v8-shared-linux-${TARGET_CPU}.tar.gz" -C out/Build lib*.so
           fi
           cd /tmp/v8-dist
           sha256sum * > "SHA256SUMS-${FLAVOR}-${TARGET_CPU}.txt"
