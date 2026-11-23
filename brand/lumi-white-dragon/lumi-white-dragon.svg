@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="wdBg" cx="50%" cy="42%" r="62%">
+      <stop offset="0%" stop-color="#151E34"/>
+      <stop offset="100%" stop-color="#070A12"/>
+    </radialGradient>
+    <linearGradient id="wdLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="65%" stop-color="#E2E8F0"/>
+      <stop offset="100%" stop-color="#94A3B8"/>
+    </linearGradient>
+    <linearGradient id="wdRim" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#818CF8"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#wdBg)"/>
+  <rect x="10" y="10" width="492" height="492" rx="102" fill="none" stroke="#38BDF8" stroke-opacity="0.35" stroke-width="4"/>
+  <!-- Geometric Origami White Dragon Wings -->
+  <polygon points="256,256 76,142 138,266 204,296" fill="url(#wdRim)" opacity="0.85"/>
+  <polygon points="256,256 436,142 374,266 308,296" fill="url(#wdRim)" opacity="0.72"/>
+  <!-- Upper Horns / Crown -->
+  <polygon points="256,74 198,170 256,146" fill="#FFFFFF"/>
+  <polygon points="256,74 314,170 256,146" fill="#CBD5E1"/>
+  <polygon points="184,114 220,186 176,204" fill="#E2E8F0"/>
+  <polygon points="328,114 292,186 336,204" fill="#94A3B8"/>
+  <!-- Faceted Dragon Head & Snout -->
+  <polygon points="256,142 184,216 256,334" fill="url(#wdLight)"/>
+  <polygon points="256,142 328,216 256,334" fill="#CBD5E1"/>
+  <!-- Lower Jaw / Shield Fang -->
+  <polygon points="212,286 256,422 300,286 256,334" fill="url(#wdRim)"/>
+  <polygon points="232,306 256,396 280,306 256,334" fill="#FFFFFF" opacity="0.9"/>
+  <!-- Glowing Cyan Eyes -->
+  <polygon points="210,214 242,226 226,238" fill="#38BDF8"/>
+  <polygon points="302,214 270,226 286,238" fill="#38BDF8"/>
+</svg>

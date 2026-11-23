@@ -1,0 +1,116 @@
+name: Sectium Browser — Auto-Releasing Baseline (RollingReleaseManifest)
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Unified baseline release tag (e.g. v0.5.0-baseline)'
+        required: true
+        default: 'v0.5.0-baseline'
+      previous_tag:
+        description: 'Previous baseline tag for O(1) rollback'
+        required: true
+        default: 'v0.4.0-components'
+      components_tag:
+        description: 'sectium-distributions component pack tag'
+        required: true
+        default: 'v0.4.0-components'
+      gravity_tag:
+        description: 'holo-compiler Damped Gravity multi-OS release tag'
+        required: true
+        default: 'v0.5.0-gravity'
+      display_tag:
+        description: 'sectium-display GUI shells release tag'
+        required: true
+        default: 'v0.4.0'
+  schedule:
+    - cron: '0 4 * * 1'
+
+permissions:
+  contents: write
+
+jobs:
+  assemble-and-release-baseline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sectium-browser
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Run Sectium Browser & Manifest Test Suite
+        run: |
+          node --test \
+            installer/release-profile.test.mts \
+            installer/security-hardening.test.mts \
+            shell/virtual-frame-shell.test.mts \
+            baseline-manifest.test.mts
+
+      - name: Fetch Verified Component Shards & Multi-OS Binaries
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COMPONENTS_TAG: ${{ inputs.components_tag || 'v0.4.0-components' }}
+          GRAVITY_TAG: ${{ inputs.gravity_tag || 'v0.5.0-gravity' }}
+          DISPLAY_TAG: ${{ inputs.display_tag || 'v0.4.0' }}
+        run: |
+          mkdir -p dist-baseline
+
+          echo "Pulling modular V8 & Sectium component .b8p packs + bun-neon-v8.exe..."
+          gh release download "$COMPONENTS_TAG" \
+            --repo awesome-os/sectium-distributions \
+            --pattern "v8-shared-win64.b8p" \
+            --pattern "sectium-shell-win64.b8p" \
+            --pattern "bun-neon-v8.exe" \
+            --dir dist-baseline --clobber
+
+          echo "Pulling Damped Gravity multi-OS b8g-shim + libsectium_display..."
+          gh release download "$GRAVITY_TAG" \
+            --repo awesome-os/holo-compiler \
+            --pattern "b8g-shim*" \
+            --pattern "libsectium_display*" \
+            --dir dist-baseline --clobber
+
+          echo "Pulling 8 native Win32 gui-shells..."
+          gh release download "$DISPLAY_TAG" \
+            --repo awesome-os/sectium-display \
+            --pattern "0*.exe" \
+            --dir dist-baseline --clobber
+
+          ls -lh dist-baseline
+
+      - name: Package Lumi White Dragon Brand Pack & Emit RollingReleaseManifest.json
+        env:
+          BASELINE_TAG: ${{ inputs.tag || 'v0.5.0-baseline' }}
+          PREVIOUS_TAG: ${{ inputs.previous_tag || 'v0.4.0-components' }}
+          COMPONENTS_TAG: ${{ inputs.components_tag || 'v0.4.0-components' }}
+          GRAVITY_TAG: ${{ inputs.gravity_tag || 'v0.5.0-gravity' }}
+          DISPLAY_TAG: ${{ inputs.display_tag || 'v0.4.0' }}
+        run: |
+          cp brand/lumi-white-dragon/lumi-white-dragon.ico dist-baseline/lumi-white-dragon.ico
+          cp brand/lumi-white-dragon/chromium-brand-overlay.json dist-baseline/chromium-brand-overlay.json
+          tar -czf dist-baseline/lumi-white-dragon-brand-pack.tar.gz -C brand lumi-white-dragon
+          node -e "import('./installer/release-profile.mts').then(m => { const fs = require('fs'); fs.writeFileSync('dist-baseline/args-win64.gn', m.generateStaticReleaseGnArgs('win-x64')); fs.writeFileSync('dist-baseline/args-linux-x64.gn', m.generateStaticReleaseGnArgs('linux-x64')); })"
+          node baseline-manifest.mts dist-baseline
+          cat dist-baseline/SHA256SUMS.txt
+
+      - name: Publish Unified Sectium Browser Baseline Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASELINE_TAG: ${{ inputs.tag || 'v0.5.0-baseline' }}
+          COMPONENTS_TAG: ${{ inputs.components_tag || 'v0.4.0-components' }}
+          GRAVITY_TAG: ${{ inputs.gravity_tag || 'v0.5.0-gravity' }}
+          DISPLAY_TAG: ${{ inputs.display_tag || 'v0.4.0' }}
+        run: |
+          gh release delete "$BASELINE_TAG" --yes 2>/dev/null || true
+          gh release create "$BASELINE_TAG" dist-baseline/* \
+            --title "Sectium Browser ${BASELINE_TAG} — Unified Modular Baseline (V8 16.0.88 + Display ABI + 8 GUI Shells)" \
+            --notes "Unified auto-assembled Sectium Browser baseline release.
+
+          ### Included Verified Components
+          - **Shared V8 & Sectium Component Packs** (\`sectium-distributions @ ${COMPONENTS_TAG}\`): \`v8-shared-win64.b8p\`, \`sectium-shell-win64.b8p\`, \`bun-neon-v8.exe\`
+          - **Damped Gravity Multi-OS Core** (\`holo-compiler @ ${GRAVITY_TAG}\`): 4-OS \`b8g-shim\` + 5-OS \`libsectium_display\` (\`B8G_DISPLAY_V1\`)
+          - **Native Win32 GUI Shells** (\`sectium-display @ ${DISPLAY_TAG}\`): \`01-browser-split-shell.exe\` .. \`08-tray-popover-widget-shell.exe\`
+          - **Hardened GN Profiles + Integrity**: \`args-win64.gn\`, \`args-linux-x64.gn\`, \`RollingReleaseManifest.json\`, \`SHA256SUMS.txt\`"

@@ -1,0 +1,31 @@
+{
+  "schema": "sectium-brand-overlay-v1",
+  "brand_name": "Sectium Browser",
+  "mascot": "Lumi White Dragon",
+  "vendor": "Awesome-OS",
+  "replaces_chromium_appearance": true,
+  "product_strings": {
+    "IDS_PRODUCT_NAME": "Sectium Browser",
+    "IDS_SHORT_PRODUCT_NAME": "Sectium",
+    "IDS_SXS_SHORTCUT_NAME": "Sectium Browser",
+    "IDS_PRODUCT_OS_NAME": "Awesome-OS",
+    "IDS_ABOUT_VERSION_COMPANY_NAME": "Awesome-OS",
+    "IDS_ABOUT_VERSION_COPYRIGHT": "Copyright Awesome-OS Contributors. BSD-3-Clause."
+  },
+  "chromium_theme_replacements": {
+    "chrome/app/theme/chromium/win/chromium.ico": "brand/lumi-white-dragon/lumi-white-dragon.ico",
+    "chrome/app/theme/chromium/win/app_list.ico": "brand/lumi-white-dragon/lumi-white-dragon.ico",
+    "chrome/app/theme/chromium/product_logo_16.png": "brand/lumi-white-dragon/product_logo_16.png",
+    "chrome/app/theme/chromium/product_logo_24.png": "brand/lumi-white-dragon/product_logo_24.png",
+    "chrome/app/theme/chromium/product_logo_32.png": "brand/lumi-white-dragon/product_logo_32.png",
+    "chrome/app/theme/chromium/product_logo_48.png": "brand/lumi-white-dragon/product_logo_48.png",
+    "chrome/app/theme/chromium/product_logo_64.png": "brand/lumi-white-dragon/product_logo_64.png",
+    "chrome/app/theme/chromium/product_logo_128.png": "brand/lumi-white-dragon/product_logo_128.png",
+    "chrome/app/theme/chromium/product_logo_256.png": "brand/lumi-white-dragon/product_logo_256.png",
+    "chrome/app/theme/default_100_percent/chromium/product_logo_16.png": "brand/lumi-white-dragon/product_logo_16.png",
+    "chrome/app/theme/default_100_percent/chromium/product_logo_32.png": "brand/lumi-white-dragon/product_logo_32.png",
+    "chrome/app/theme/default_200_percent/chromium/product_logo_16.png": "brand/lumi-white-dragon/product_logo_32.png",
+    "chrome/app/theme/default_200_percent/chromium/product_logo_32.png": "brand/lumi-white-dragon/product_logo_64.png",
+    "chrome/browser/resources/new_tab_page/new_tab_page.html": "brand/lumi-white-dragon/new-tab-lumi.html"
+  }
+}
