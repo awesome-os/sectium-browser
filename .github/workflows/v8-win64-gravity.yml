@@ -43,6 +43,8 @@ jobs:
           Write-Host "[v8-win64] Using installed Windows SDK: $installedSdk"
           $stPath = "build\toolchain\win\setup_toolchain.py"
           (Get-Content $stPath -Raw) -replace '10\.0\.\d+\.\d+', $installedSdk | Set-Content $stPath -NoNewline
+          $winGn = "build\config\win\BUILD.gn"
+          (Get-Content $winGn -Raw) -replace 'NTDDI_WIN11_[A-Z0-9_]+', 'NTDDI_WIN10_NI' | Set-Content $winGn -NoNewline
           New-Item -ItemType Directory -Force -Path out\Component | Out-Null
           @"
           is_component_build = true
