@@ -109,12 +109,30 @@ jobs:
             fs.writeFileSync('upstream-gravity-plan.json', JSON.stringify(plan, null, 2) + '\n');
           "
 
+      - name: Live Dual-Layer Semantic AST Diff Gate (Released v0.6.0 Headers vs Upstream HEAD)
+        if: ${{ (inputs.mode || 'v8-cloud-drop') == 'v8-cloud-drop' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/sem-old-v8 /tmp/sem-old-bssl /tmp/sem-old-brotli /tmp/sem-dl
+          gh release download v0.6.0-v8-cloud --repo awesome-os/sectium-browser --pattern "v8-include-*.tar.gz" --dir /tmp/sem-dl --clobber
+          gh release download v0.6.0-chromium-shards --repo awesome-os/sectium-browser --pattern "boringssl-include-*.tar.gz" --pattern "brotli-include-*.tar.gz" --dir /tmp/sem-dl --clobber
+          tar -xzf /tmp/sem-dl/v8-include-*.tar.gz -C /tmp/sem-old-v8
+          tar -xzf /tmp/sem-dl/boringssl-include-*.tar.gz -C /tmp/sem-old-bssl
+          tar -xzf /tmp/sem-dl/brotli-include-*.tar.gz -C /tmp/sem-old-brotli
+          git clone --depth=1 https://boringssl.googlesource.com/boringssl /tmp/bssl-upstream
+          git clone --depth=1 https://github.com/google/brotli.git /tmp/brotli-upstream
+          node upstream/semantic-diff.mts v8 /tmp/sem-old-v8/include /tmp/v8-upstream/include semantic-diff-v8.json
+          node upstream/semantic-diff.mts boringssl /tmp/sem-old-bssl/include /tmp/bssl-upstream/include semantic-diff-boringssl.json
+          node upstream/semantic-diff.mts brotli /tmp/sem-old-brotli/include /tmp/brotli-upstream/c/include semantic-diff-brotli.json
+
       - name: Upload Upstream Gravity Plan Artifact
         uses: actions/upload-artifact@v4
         with:
           name: upstream-gravity-cloud-drop-${{ inputs.bounce_index || '0' }}
           path: |
             upstream-gravity-plan.json
+            semantic-diff-*.json
             brand/lumi-white-dragon/chromium-brand-overlay.json
 
       - name: Trigger Baseline Release on Ground (if enabled)
