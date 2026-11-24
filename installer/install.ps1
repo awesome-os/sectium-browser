@@ -1,16 +1,9 @@
-﻿#Requires -Version 5.1
-<#
-.SYNOPSIS
-  Sectium Browser — Sovereign 1-Line Windows Installer
-.EXAMPLE
-  irm https://github.com/awesome-os/sectium-browser/releases/latest/download/install.ps1 | iex
-#>
-param(
-  [string]$InstallDir = "$env:LOCALAPPDATA\AwesomeOS\SectiumBrowser",
-  [string]$Tag = "latest"
-)
+﻿# Sectium Browser — Sovereign 1-Line Windows Installer
+# Usage: irm https://github.com/awesome-os/sectium-browser/releases/latest/download/install.ps1 | iex
 
 $ErrorActionPreference = 'Stop'
+$InstallDir = if ($env:AWESOME_OS_INSTALL_DIR) { $env:AWESOME_OS_INSTALL_DIR } else { "$env:LOCALAPPDATA\AwesomeOS\SectiumBrowser" }
+$Tag = if ($env:AWESOME_OS_TAG) { $env:AWESOME_OS_TAG } else { "latest" }
 $base = if ($Tag -eq "latest") {
   "https://github.com/awesome-os/sectium-browser/releases/latest/download"
 } else {
@@ -37,7 +30,7 @@ if ($expectedLine) {
   Write-Host "[Sectium Browser] SHA-256 verified: $actual" -ForegroundColor Green
 }
 
-# Create Start Menu shortcut
+# Create Start Menu shortcut with explicit icon binding
 try {
   $startMenu = Join-Path $env:APPDATA "Microsoft\Windows\Start Menu\Programs"
   $lnkPath = Join-Path $startMenu "Sectium Browser.lnk"
@@ -45,6 +38,7 @@ try {
   $sc = $ws.CreateShortcut($lnkPath)
   $sc.TargetPath = $exePath
   $sc.WorkingDirectory = $InstallDir
+  $sc.IconLocation = "$exePath,0"
   $sc.Description = "Sectium Browser — Sovereign Chromium 158+ with AtlasKV Search"
   $sc.Save()
   Write-Host "[Sectium Browser] Start Menu shortcut created: $lnkPath" -ForegroundColor Green
