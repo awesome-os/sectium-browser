@@ -1,0 +1,127 @@
+{
+  "schema": "b8g-ghost-registry-v1",
+  "tag": "v0.6.0-chromium-shards",
+  "total_artifacts": 20,
+  "artifacts": [
+    {
+      "filename": "boringssl-include-289645a.tar.gz",
+      "sha256": "ffacff96a4621f1dd031745305ce18b7bff8ee8f2a2d6bbe7cef2d1287facd60",
+      "kind": "headers",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.0-chromium-shards/boringssl-include-289645a.tar.gz"
+    },
+    {
+      "filename": "boringssl-shared-linux-x64.tar.gz",
+      "sha256": "f8781bc889035faef5bad8a530ba79e78d0748bbb4ceedb62c66a916a960579a",
+      "kind": "shared-lib",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.0-chromium-shards/boringssl-shared-linux-x64.tar.gz"
+    },
+    {
+      "filename": "brotli-include-fed075f.tar.gz",
+      "sha256": "cf4d347aa795e8a003e700f56d7ee846ffc9b37e69cca80ae0c295a2f8c6f109",
+      "kind": "headers",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.0-chromium-shards/brotli-include-fed075f.tar.gz"
+    },
+    {
+      "filename": "brotli-shared-linux-x64.tar.gz",
+      "sha256": "f75127bf68a556a550ebfa1b9206635ec8c01fd245f54f62cd3fc2ea21467ff0",
+      "kind": "shared-lib",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.0-chromium-shards/brotli-shared-linux-x64.tar.gz"
+    },
+    {
+      "filename": "expat-include-0d6dacc.tar.gz",
+      "sha256": "1d5c448ad89641c98e22e5117b81bdcc86266c28024a9ebdeaa9c1f006df1d0b",
+      "kind": "headers",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.0-chromium-shards/expat-include-0d6dacc.tar.gz"
+    },
+    {
+      "filename": "expat-shared-linux-x64.tar.gz",
+      "sha256": "13864bf477134b19226245f50ec6e8351f94702ee98ce99c210e3fc79be7022d",
+      "kind": "shared-lib",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.0-chromium-shards/expat-shared-linux-x64.tar.gz"
+    },
+    {
+      "filename": "freetype-include-504159f.tar.gz",
+      "sha256": "220d348d0c65121a4d59129b41e42812dbed6e82e850e9122a6b5fc86c530751",
+      "kind": "headers",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.0-chromium-shards/freetype-include-504159f.tar.gz"
+    },
+    {
+      "filename": "freetype-shared-linux-x64.tar.gz",
+      "sha256": "bb11dfe372811d208871804b16add6f1139610e9f66060425cf1fd913960d68d",
+      "kind": "shared-lib",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.0-chromium-shards/freetype-shared-linux-x64.tar.gz"
+    },
+    {
+      "filename": "harfbuzz-include-ce0a123.tar.gz",
+      "sha256": "ae91dcfd03c89cc05100f100aebba107d56a53baef166f1a3a806730a1cac328",
+      "kind": "headers",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.0-chromium-shards/harfbuzz-include-ce0a123.tar.gz"
+    },
+    {
+      "filename": "harfbuzz-shared-linux-x64.tar.gz",
+      "sha256": "deb7ae9542ea216e58b5740b8b326c499364d25478ccafdf1608cf9060cb02fb",
+      "kind": "shared-lib",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.0-chromium-shards/harfbuzz-shared-linux-x64.tar.gz"
+    },
+    {
+      "filename": "libjpeg-turbo-include-1631763.tar.gz",
+      "sha256": "8785d63a80ea474bcd0923e726c716af0106556a272c4feacd076da65ab8612a",
+      "kind": "headers",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.0-chromium-shards/libjpeg-turbo-include-1631763.tar.gz"
+    },
+    {
+      "filename": "libjpeg-turbo-shared-linux-x64.tar.gz",
+      "sha256": "8e4d0448e7079d17369bc8a7aaccb6ce381a43b42e9ecf954ea5427229aa103e",
+      "kind": "shared-lib",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.0-chromium-shards/libjpeg-turbo-shared-linux-x64.tar.gz"
+    },
+    {
+      "filename": "libpng-include-73a6865.tar.gz",
+      "sha256": "f05aad0e70cd83ede39293fa30212f111d2b707d492f351af6fc183d95166d7e",
+      "kind": "headers",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.0-chromium-shards/libpng-include-73a6865.tar.gz"
+    },
+    {
+      "filename": "libpng-shared-linux-x64.tar.gz",
+      "sha256": "b54f0a8824b2f640718d50cff30fc0064b9c1ae0c313d2ddba84c508ae73e2b3",
+      "kind": "shared-lib",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.0-chromium-shards/libpng-shared-linux-x64.tar.gz"
+    },
+    {
+      "filename": "libwebp-include-fdee9a8.tar.gz",
+      "sha256": "3df40132bd2d5f4899474befad9b502dccb762ffbe0cc2a96e1894a9bfd9d62e",
+      "kind": "headers",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.0-chromium-shards/libwebp-include-fdee9a8.tar.gz"
+    },
+    {
+      "filename": "libwebp-shared-linux-x64.tar.gz",
+      "sha256": "8cf5d845499abeddc23826f0b651e5d97b52973c07fc681f139c6301acc35a2d",
+      "kind": "shared-lib",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.0-chromium-shards/libwebp-shared-linux-x64.tar.gz"
+    },
+    {
+      "filename": "sqlite3-include-3490100.tar.gz",
+      "sha256": "5bb066b7a1898a5a0d62ba9f39da539415e47cf10f198032b6f4f63aac2b9bc1",
+      "kind": "headers",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.0-chromium-shards/sqlite3-include-3490100.tar.gz"
+    },
+    {
+      "filename": "sqlite3-shared-linux-x64.tar.gz",
+      "sha256": "42a59b7f82b7502d35cdc681643e32a69910bf416d20b430fed3f489f7f49f28",
+      "kind": "shared-lib",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.0-chromium-shards/sqlite3-shared-linux-x64.tar.gz"
+    },
+    {
+      "filename": "zlib-include-47b9b95.tar.gz",
+      "sha256": "a820550eb3bc571b5d51a9a12b93ce4037fd7d1167c570caffcd23c38052a9db",
+      "kind": "headers",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.0-chromium-shards/zlib-include-47b9b95.tar.gz"
+    },
+    {
+      "filename": "zlib-shared-linux-x64.tar.gz",
+      "sha256": "4e5454ca4168b5d0f2e4746f1ea9a419e21874a6015f5e3c1a7c28892f6dc5d1",
+      "kind": "shared-lib",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.0-chromium-shards/zlib-shared-linux-x64.tar.gz"
+    }
+  ]
+}

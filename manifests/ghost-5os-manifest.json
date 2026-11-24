@@ -1,0 +1,115 @@
+{
+  "schema": "b8g-ghost-registry-5os-v1",
+  "compiler": "holo-compiler (zig cc 0.14.0, zero cmake/ninja)",
+  "targets": [
+    "win64",
+    "linux-x64",
+    "linux-arm64",
+    "macos-arm64",
+    "wasm32-wasi"
+  ],
+  "tag": "v0.2.0-holo-5os",
+  "total_libs": 20,
+  "libs": [
+    {
+      "filename": "libbrotli-linux-arm64.so",
+      "sha256": "c2294baf6aba547372e4ceda76c688fc74fcf7040641579cb8e55cec90a5d815",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libbrotli-linux-arm64.so"
+    },
+    {
+      "filename": "libbrotli-linux-x64.so",
+      "sha256": "32f706660826092ea5a6af454660cdc7d096708e9cea3f224f1f67034ed6e750",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libbrotli-linux-x64.so"
+    },
+    {
+      "filename": "libbrotli-macos-arm64.dylib",
+      "sha256": "470c1426e775197b4bc95b85751a82fd196d5e436dd9b550fe0509cd48b664b2",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libbrotli-macos-arm64.dylib"
+    },
+    {
+      "filename": "libbrotli-wasm32-wasi.wasm",
+      "sha256": "15f09b55143cf6c90e9b9af09f5465ff20b9597f08eae7fd8d1a50c5f0d29aa1",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libbrotli-wasm32-wasi.wasm"
+    },
+    {
+      "filename": "libbrotli-win64.dll",
+      "sha256": "9d6578ccaa0d97b540652a1f7b621bcbfcd5337b56e8a6c2cb1eba856c903238",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libbrotli-win64.dll"
+    },
+    {
+      "filename": "libexpat-linux-arm64.so",
+      "sha256": "e20241bf5d7a8c3a858ba8826edb3f958574e702dd0644c64aca1f7791cb8381",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libexpat-linux-arm64.so"
+    },
+    {
+      "filename": "libexpat-linux-x64.so",
+      "sha256": "8a11758fd9ea9e851b7998a598566e367c847805f6dd163134ba602cb0b213ba",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libexpat-linux-x64.so"
+    },
+    {
+      "filename": "libexpat-macos-arm64.dylib",
+      "sha256": "16cec3b4ae96526e3fb7d4e38124e0b1836df17c914707f1ce462b283eddddee",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libexpat-macos-arm64.dylib"
+    },
+    {
+      "filename": "libexpat-wasm32-wasi.wasm",
+      "sha256": "0047254a972e0fd4a6563b849bfb2b0fc489b1ab0406e9a198d6a6add5fa1e1e",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libexpat-wasm32-wasi.wasm"
+    },
+    {
+      "filename": "libexpat-win64.dll",
+      "sha256": "f553d8d1dcab427235c21955f33e4ad1b971211ab21de1377c48242026a3fb34",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libexpat-win64.dll"
+    },
+    {
+      "filename": "libwebp-linux-arm64.so",
+      "sha256": "21565c15cd0464650f8b8d05ca728b730cfa3a7d9b8a9c565fbb4984b9e5f9dd",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libwebp-linux-arm64.so"
+    },
+    {
+      "filename": "libwebp-linux-x64.so",
+      "sha256": "eb3fa15277abfe4d4201d83f57c0d2621226d58631fc9e59eba1b036678b996f",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libwebp-linux-x64.so"
+    },
+    {
+      "filename": "libwebp-macos-arm64.dylib",
+      "sha256": "fcf6818f1d3854e0a4e4a366e96380d5de538ba81f397b5bd29cd8e48ddbc98a",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libwebp-macos-arm64.dylib"
+    },
+    {
+      "filename": "libwebp-wasm32-wasi.wasm",
+      "sha256": "8ae767a8326aa0a7ffacdc6451a1d648801d1e969475ba5c9b4a023e12d14cf7",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libwebp-wasm32-wasi.wasm"
+    },
+    {
+      "filename": "libwebp-win64.dll",
+      "sha256": "c705a004d40197f709fac60ca6a67832e2c13a8ade91c27d733409a6bfb59b6f",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libwebp-win64.dll"
+    },
+    {
+      "filename": "libsqlite3-linux-arm64.so",
+      "sha256": "4c0742d16d85f6e296804c161dcac6d8ec9e60f6f73bff455a7d907068369263",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libsqlite3-linux-arm64.so"
+    },
+    {
+      "filename": "libsqlite3-linux-x64.so",
+      "sha256": "ca98fafd5b26079872c8e7aabeee1c4054add0322fac948c0d3801ece87d0d48",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libsqlite3-linux-x64.so"
+    },
+    {
+      "filename": "libsqlite3-macos-arm64.dylib",
+      "sha256": "e727134d10432d7e9db80616c90a71920b13477c4bb27b631b17f8d14ab20f30",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libsqlite3-macos-arm64.dylib"
+    },
+    {
+      "filename": "libsqlite3-wasm32-wasi.wasm",
+      "sha256": "daf705cfb609beb7f2ccaed7b750cc4d9c01eb4efe90bc82d9fbe376f68a56ea",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libsqlite3-wasm32-wasi.wasm"
+    },
+    {
+      "filename": "libsqlite3-win64.dll",
+      "sha256": "ce67cda162f4ee8e7c89e01653bad3525bb9cab6a2b40191dbc39c6d1469bf8c",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libsqlite3-win64.dll"
+    }
+  ]
+}

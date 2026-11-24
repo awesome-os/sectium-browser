@@ -130,6 +130,22 @@ jobs:
           node baseline-manifest.mts dist-baseline
           cat dist-baseline/SHA256SUMS.txt
 
+      - name: Commit Verified Text Manifests to Git (manifests/)
+        run: |
+          mkdir -p manifests
+          cp dist-baseline/RollingReleaseManifest.json manifests/RollingReleaseManifest.json
+          cp dist-baseline/ghost-index.json manifests/ghost-index.json
+          cp dist-baseline/SHA256SUMS.txt manifests/SHA256SUMS.txt
+          for f in ghost-shards-manifest.json ghost-5os-manifest.json ghost-toolchains-manifest.json; do
+            [ -f "dist-baseline/$f" ] && cp "dist-baseline/$f" "manifests/$f" || true
+          done
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add manifests/
+          git diff --cached --quiet || (git commit -m "chore(manifests): track ${BASELINE_TAG} text manifests in git" && git push origin main)
+        env:
+          BASELINE_TAG: ${{ inputs.tag || 'v0.7.0-baseline' }}
+
       - name: Publish Unified Sectium Browser Baseline Release
         env:
           GH_TOKEN: ${{ github.token }}

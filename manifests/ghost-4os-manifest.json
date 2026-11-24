@@ -1,0 +1,88 @@
+{
+  "schema": "b8g-ghost-registry-4os-v1",
+  "compiler": "holo-compiler (zig cc 0.14.0, zero cmake/ninja)",
+  "tag": "v0.1.0-holo-4os",
+  "total_libs": 16,
+  "libs": [
+    {
+      "filename": "libbrotli-linux-arm64.so",
+      "sha256": "c2294baf6aba547372e4ceda76c688fc74fcf7040641579cb8e55cec90a5d815",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.1.0-holo-4os/libbrotli-linux-arm64.so"
+    },
+    {
+      "filename": "libbrotli-linux-x64.so",
+      "sha256": "32f706660826092ea5a6af454660cdc7d096708e9cea3f224f1f67034ed6e750",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.1.0-holo-4os/libbrotli-linux-x64.so"
+    },
+    {
+      "filename": "libbrotli-macos-arm64.dylib",
+      "sha256": "86691808d8ef42588b6fed4be1b177c8b01e47af1a16dc4f0ec17bdb41decc4d",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.1.0-holo-4os/libbrotli-macos-arm64.dylib"
+    },
+    {
+      "filename": "libbrotli-win64.dll",
+      "sha256": "9d6578ccaa0d97b540652a1f7b621bcbfcd5337b56e8a6c2cb1eba856c903238",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.1.0-holo-4os/libbrotli-win64.dll"
+    },
+    {
+      "filename": "libexpat-linux-arm64.so",
+      "sha256": "e20241bf5d7a8c3a858ba8826edb3f958574e702dd0644c64aca1f7791cb8381",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.1.0-holo-4os/libexpat-linux-arm64.so"
+    },
+    {
+      "filename": "libexpat-linux-x64.so",
+      "sha256": "8a11758fd9ea9e851b7998a598566e367c847805f6dd163134ba602cb0b213ba",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.1.0-holo-4os/libexpat-linux-x64.so"
+    },
+    {
+      "filename": "libexpat-macos-arm64.dylib",
+      "sha256": "61de84db82aaca89d1aa3246e532105458d169f3c6200229af403b2ef3bd4837",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.1.0-holo-4os/libexpat-macos-arm64.dylib"
+    },
+    {
+      "filename": "libexpat-win64.dll",
+      "sha256": "f553d8d1dcab427235c21955f33e4ad1b971211ab21de1377c48242026a3fb34",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.1.0-holo-4os/libexpat-win64.dll"
+    },
+    {
+      "filename": "libwebp-linux-arm64.so",
+      "sha256": "21565c15cd0464650f8b8d05ca728b730cfa3a7d9b8a9c565fbb4984b9e5f9dd",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.1.0-holo-4os/libwebp-linux-arm64.so"
+    },
+    {
+      "filename": "libwebp-linux-x64.so",
+      "sha256": "eb3fa15277abfe4d4201d83f57c0d2621226d58631fc9e59eba1b036678b996f",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.1.0-holo-4os/libwebp-linux-x64.so"
+    },
+    {
+      "filename": "libwebp-macos-arm64.dylib",
+      "sha256": "73b9f42905f2c369116c7697938c1e77ad720749546b496f07164edae9f9732b",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.1.0-holo-4os/libwebp-macos-arm64.dylib"
+    },
+    {
+      "filename": "libwebp-win64.dll",
+      "sha256": "c705a004d40197f709fac60ca6a67832e2c13a8ade91c27d733409a6bfb59b6f",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.1.0-holo-4os/libwebp-win64.dll"
+    },
+    {
+      "filename": "libsqlite3-linux-arm64.so",
+      "sha256": "4c0742d16d85f6e296804c161dcac6d8ec9e60f6f73bff455a7d907068369263",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.1.0-holo-4os/libsqlite3-linux-arm64.so"
+    },
+    {
+      "filename": "libsqlite3-linux-x64.so",
+      "sha256": "ca98fafd5b26079872c8e7aabeee1c4054add0322fac948c0d3801ece87d0d48",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.1.0-holo-4os/libsqlite3-linux-x64.so"
+    },
+    {
+      "filename": "libsqlite3-macos-arm64.dylib",
+      "sha256": "aec37b257324100156f09d7312beb3ea9488cd0e81640ae78e9ac8eea5b88f12",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.1.0-holo-4os/libsqlite3-macos-arm64.dylib"
+    },
+    {
+      "filename": "libsqlite3-win64.dll",
+      "sha256": "ce67cda162f4ee8e7c89e01653bad3525bb9cab6a2b40191dbc39c6d1469bf8c",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.1.0-holo-4os/libsqlite3-win64.dll"
+    }
+  ]
+}

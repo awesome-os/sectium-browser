@@ -1,0 +1,372 @@
+{
+  "schema": "sectium-baseline-v1",
+  "baseline_tag": "v0.6.1-baseline",
+  "previous_tag": "v0.6.0-baseline",
+  "generated_at": "2026-11-23T23:45:56.284Z",
+  "brand": {
+    "product_name": "Sectium Browser",
+    "mascot": "Lumi White Dragon",
+    "replaces_chromium_appearance": true,
+    "icon_file": "lumi-white-dragon.ico",
+    "brand_pack": "lumi-white-dragon-brand-pack.tar.gz",
+    "overlay_file": "chromium-brand-overlay.json"
+  },
+  "chromium_baseline": {
+    "milestone": "146.x",
+    "v8_version": "16.0.88",
+    "is_component_build": true,
+    "build_with_tflite_lib": false
+  },
+  "abi": {
+    "control_plane": "B8G_ABI_MAGIC_V3",
+    "display": "B8G_DISPLAY_V1",
+    "arena": "B8G_ARENA_V1"
+  },
+  "components": [
+    {
+      "filename": "01-browser-split-shell.exe",
+      "role": "shell",
+      "source_repo": "awesome-os/sectium-display",
+      "source_tag": "v0.4.0",
+      "bytes": 205312,
+      "sha256": "5b87b80b0f583a7b96d06b06c6caa04924b833d08066b726b64fc4b7799a031d",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/01-browser-split-shell.exe"
+    },
+    {
+      "filename": "02-ide-workbench-shell.exe",
+      "role": "shell",
+      "source_repo": "awesome-os/sectium-display",
+      "source_tag": "v0.4.0",
+      "bytes": 206848,
+      "sha256": "0908cf0549343030c992387cbfca4a05047bba52c18fa2a6dd520d9087b7bc2c",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/02-ide-workbench-shell.exe"
+    },
+    {
+      "filename": "03-tiling-wm-shell.exe",
+      "role": "shell",
+      "source_repo": "awesome-os/sectium-display",
+      "source_tag": "v0.4.0",
+      "bytes": 197120,
+      "sha256": "e6c1243aaf96b9e30930a7ffc4835b2656c17869613ce010721245d012623fac",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/03-tiling-wm-shell.exe"
+    },
+    {
+      "filename": "04-command-palette-launcher.exe",
+      "role": "shell",
+      "source_repo": "awesome-os/sectium-display",
+      "source_tag": "v0.4.0",
+      "bytes": 203264,
+      "sha256": "353e62701fff1c1ea3ec011760e4f39b4dbdcd7a9cc6cc84f5b4f0366f6cac00",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/04-command-palette-launcher.exe"
+    },
+    {
+      "filename": "05-multi-agent-world-shell.exe",
+      "role": "shell",
+      "source_repo": "awesome-os/sectium-display",
+      "source_tag": "v0.4.0",
+      "bytes": 204288,
+      "sha256": "f356ee1324dd329845e5fef6068068957ebbe1e50df62242521f638648512696",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/05-multi-agent-world-shell.exe"
+    },
+    {
+      "filename": "06-node-graph-studio-shell.exe",
+      "role": "shell",
+      "source_repo": "awesome-os/sectium-display",
+      "source_tag": "v0.4.0",
+      "bytes": 201216,
+      "sha256": "78e9e77df89a4ee9bb256d34d85647cd20dbf765a2671578357d65ca009d584f",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/06-node-graph-studio-shell.exe"
+    },
+    {
+      "filename": "07-docking-dashboard-shell.exe",
+      "role": "shell",
+      "source_repo": "awesome-os/sectium-display",
+      "source_tag": "v0.4.0",
+      "bytes": 204800,
+      "sha256": "0413e56f70aa8ad2b2fc4c8d588ba43eb2c204daccff75a919aa3bc6cca6de81",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/07-docking-dashboard-shell.exe"
+    },
+    {
+      "filename": "08-tray-popover-widget-shell.exe",
+      "role": "shell",
+      "source_repo": "awesome-os/sectium-display",
+      "source_tag": "v0.4.0",
+      "bytes": 193536,
+      "sha256": "4ab09aeaedd19718cc8cef5b8ff0eabc092acbc583e5020491ef0612a14fe7d4",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/08-tray-popover-widget-shell.exe"
+    },
+    {
+      "filename": "args-linux-x64.gn",
+      "role": "profile",
+      "source_repo": "awesome-os/sectium-browser",
+      "source_tag": "v0.6.1-baseline",
+      "bytes": 882,
+      "sha256": "dc42f7cb5425fbf89fdb80fb1dd1442386705446f3022230a7ca10ed9cd6a80d",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/args-linux-x64.gn"
+    },
+    {
+      "filename": "args-win64.gn",
+      "role": "profile",
+      "source_repo": "awesome-os/sectium-browser",
+      "source_tag": "v0.6.1-baseline",
+      "bytes": 781,
+      "sha256": "56ac6e2d621593811f7907f9d31ecb7c454852b4f3bdaba69a1fb71b18decbbf",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/args-win64.gn"
+    },
+    {
+      "filename": "b8g-ghost-sdk.tar.gz",
+      "role": "profile",
+      "source_repo": "awesome-os/sectium-browser",
+      "source_tag": "v0.6.1-baseline",
+      "bytes": 13081,
+      "sha256": "cfc0c2de22352f24104e9b8c104a771202ed780b6b84fae960aec51ecd83b633",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/b8g-ghost-sdk.tar.gz"
+    },
+    {
+      "filename": "b8g-shim-linux-arm64",
+      "role": "shim",
+      "source_repo": "awesome-os/holo-compiler",
+      "source_tag": "v0.5.0-gravity",
+      "bytes": 44984,
+      "sha256": "646ad8a435189db06c7e24a1417117d730fb10a8ae16d016c80292d47fa510ad",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/b8g-shim-linux-arm64"
+    },
+    {
+      "filename": "b8g-shim-linux-x64",
+      "role": "shim",
+      "source_repo": "awesome-os/holo-compiler",
+      "source_tag": "v0.5.0-gravity",
+      "bytes": 38024,
+      "sha256": "d7d701ea8ebc16595b92eaa321332033ce17f4fe45d9453431dcfef3dee14544",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/b8g-shim-linux-x64"
+    },
+    {
+      "filename": "b8g-shim-macos-arm64",
+      "role": "shim",
+      "source_repo": "awesome-os/holo-compiler",
+      "source_tag": "v0.5.0-gravity",
+      "bytes": 52040,
+      "sha256": "aa2fc945ab2d1f80263edba55dd183419a2114826a99cadcc9d5209df06ec879",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/b8g-shim-macos-arm64"
+    },
+    {
+      "filename": "b8g-shim.exe",
+      "role": "shim",
+      "source_repo": "awesome-os/holo-compiler",
+      "source_tag": "v0.5.0-gravity",
+      "bytes": 29696,
+      "sha256": "4e916c764be73cbaf50f04c518c74b05451efe91d1d9c6804207702b5f7b5748",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/b8g-shim.exe"
+    },
+    {
+      "filename": "bun-neon-v8.exe",
+      "role": "runtime",
+      "source_repo": "awesome-os/sectium-distributions",
+      "source_tag": "v0.4.0-components",
+      "bytes": 71168,
+      "sha256": "0c90fea2ce8bae2a75303e4a77246ee5498dbbcb8f87ba12ccef8300fa01b195",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/bun-neon-v8.exe"
+    },
+    {
+      "filename": "chromium-brand-overlay.json",
+      "role": "brand",
+      "source_repo": "awesome-os/sectium-browser",
+      "source_tag": "v0.6.1-baseline",
+      "bytes": 2045,
+      "sha256": "628b3dd4f087d4b315ae79e2633a84fb95706dea069f74df06f5d8444520d223",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/chromium-brand-overlay.json"
+    },
+    {
+      "filename": "ghost-4os-manifest.json",
+      "role": "profile",
+      "source_repo": "awesome-os/sectium-browser",
+      "source_tag": "v0.6.1-baseline",
+      "bytes": 4493,
+      "sha256": "71f315d0bdfafdfeb5266e12d1f77d12be53c8f08934a6f3d3486266b4595735",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/ghost-4os-manifest.json"
+    },
+    {
+      "filename": "ghost-shards-manifest.json",
+      "role": "profile",
+      "source_repo": "awesome-os/sectium-browser",
+      "source_tag": "v0.6.1-baseline",
+      "bytes": 6503,
+      "sha256": "9ff98ea8a67467ffc2aae75968e616223a76f38dee7c4b52c16edbada6d9fce1",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/ghost-shards-manifest.json"
+    },
+    {
+      "filename": "ghost-toolchains-manifest.json",
+      "role": "profile",
+      "source_repo": "awesome-os/sectium-browser",
+      "source_tag": "v0.6.1-baseline",
+      "bytes": 3613,
+      "sha256": "bf95c2532c83eac706523092be9d39ec8c218eb289995253ae9096faf895e012",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/ghost-toolchains-manifest.json"
+    },
+    {
+      "filename": "ghost_sectium_display-linux-arm64.so",
+      "role": "profile",
+      "source_repo": "awesome-os/sectium-browser",
+      "source_tag": "v0.6.1-baseline",
+      "bytes": 10696,
+      "sha256": "c36c57c28141438cd2e6b8133c2b56c80185e487662cad899e1d1be073497c08",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/ghost_sectium_display-linux-arm64.so"
+    },
+    {
+      "filename": "ghost_sectium_display-linux-x64.so",
+      "role": "profile",
+      "source_repo": "awesome-os/sectium-browser",
+      "source_tag": "v0.6.1-baseline",
+      "bytes": 10664,
+      "sha256": "ac6c61bf7f3fc019de41ac8e797b142c22329f24c9ffc0d29987cce2c9e11d7f",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/ghost_sectium_display-linux-x64.so"
+    },
+    {
+      "filename": "ghost_sectium_display-macos-arm64.dylib",
+      "role": "profile",
+      "source_repo": "awesome-os/sectium-browser",
+      "source_tag": "v0.6.1-baseline",
+      "bytes": 53656,
+      "sha256": "48b4c64e4e3c029dc543594e9347bfbd5dfd9f923682fd6462644fd7b2bce71c",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/ghost_sectium_display-macos-arm64.dylib"
+    },
+    {
+      "filename": "ghost_sectium_display.dll",
+      "role": "profile",
+      "source_repo": "awesome-os/sectium-browser",
+      "source_tag": "v0.6.1-baseline",
+      "bytes": 24064,
+      "sha256": "fd49e165293174e774f3bb936213c3d7ffda9eaeb7514f8c2d22360ecac4b854",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/ghost_sectium_display.dll"
+    },
+    {
+      "filename": "libsectium_display-linux-arm64.so",
+      "role": "display",
+      "source_repo": "awesome-os/holo-compiler",
+      "source_tag": "v0.5.0-gravity",
+      "bytes": 20848,
+      "sha256": "c3c71874045b6a8babbcae78cc57b0f45b10a4b01d8f0f2dd7f5cc6a85d27f27",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/libsectium_display-linux-arm64.so"
+    },
+    {
+      "filename": "libsectium_display-linux-x64.so",
+      "role": "display",
+      "source_repo": "awesome-os/holo-compiler",
+      "source_tag": "v0.5.0-gravity",
+      "bytes": 22952,
+      "sha256": "79b3427b1634cb6cb72a0481baae4b900d0d5b3ccbc82caffb286796eb2c32a3",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/libsectium_display-linux-x64.so"
+    },
+    {
+      "filename": "libsectium_display-macos-arm64.dylib",
+      "role": "display",
+      "source_repo": "awesome-os/holo-compiler",
+      "source_tag": "v0.5.0-gravity",
+      "bytes": 51496,
+      "sha256": "8ed596430b5b2c67477abe5e55901ef1a54773b7180165a00564dc25c0dcdb1a",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/libsectium_display-macos-arm64.dylib"
+    },
+    {
+      "filename": "libsectium_display.dll",
+      "role": "display",
+      "source_repo": "awesome-os/holo-compiler",
+      "source_tag": "v0.5.0-gravity",
+      "bytes": 176640,
+      "sha256": "50badeec9a1882ea6997b327f207bc91366561c5e3bff56572cfb1e7fc85b923",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/libsectium_display.dll"
+    },
+    {
+      "filename": "libsectium_display.pdb",
+      "role": "display",
+      "source_repo": "awesome-os/holo-compiler",
+      "source_tag": "v0.5.0-gravity",
+      "bytes": 983040,
+      "sha256": "a6265010de2f5715c4f2fe066a7a398a9c93db3d3eb3537e8726945cc9ad5232",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/libsectium_display.pdb"
+    },
+    {
+      "filename": "libsectium_display.wasm",
+      "role": "display",
+      "source_repo": "awesome-os/holo-compiler",
+      "source_tag": "v0.5.0-gravity",
+      "bytes": 16570,
+      "sha256": "ae487c4671646a7b79b4365d222a2dda71177e3f668580a5f6c9d0476d5b6477",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/libsectium_display.wasm"
+    },
+    {
+      "filename": "lumi-white-dragon-brand-pack.tar.gz",
+      "role": "brand",
+      "source_repo": "awesome-os/sectium-browser",
+      "source_tag": "v0.6.1-baseline",
+      "bytes": 168431,
+      "sha256": "ddb0b97bc33569ec543db0bfceda9fec1b2904dc985291c4b54f86d5f33c0bf9",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/lumi-white-dragon-brand-pack.tar.gz"
+    },
+    {
+      "filename": "lumi-white-dragon.ico",
+      "role": "brand",
+      "source_repo": "awesome-os/sectium-browser",
+      "source_tag": "v0.6.1-baseline",
+      "bytes": 90500,
+      "sha256": "0ef951f1f9904563e5b7619336390cd163a8a7c6b4f103b35de3fe2de073d943",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/lumi-white-dragon.ico"
+    },
+    {
+      "filename": "sectium-shell-win64.b8p",
+      "role": "substrate",
+      "source_repo": "awesome-os/sectium-distributions",
+      "source_tag": "v0.4.0-components",
+      "bytes": 23913227,
+      "sha256": "7c820b6b557a4366358a3bcdf4c8ec4873061ceb249780af81962744f8bb611f",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/sectium-shell-win64.b8p"
+    },
+    {
+      "filename": "v8-include-eaf3708a.tar.gz",
+      "role": "profile",
+      "source_repo": "awesome-os/sectium-browser",
+      "source_tag": "v0.6.1-baseline",
+      "bytes": 310489,
+      "sha256": "5df70d97db94eb9163b8baa26fc35d53a355140405281f4bb9c82315c9adc1c1",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/v8-include-eaf3708a.tar.gz"
+    },
+    {
+      "filename": "v8-shared-linux-x64.tar.gz",
+      "role": "profile",
+      "source_repo": "awesome-os/sectium-browser",
+      "source_tag": "v0.6.1-baseline",
+      "bytes": 19728998,
+      "sha256": "39b0d6a4493285b6928b7f131d52adffd5973c32c0c57ff4d41d8dce4986dd95",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/v8-shared-linux-x64.tar.gz"
+    },
+    {
+      "filename": "v8-shared-win64.b8p",
+      "role": "substrate",
+      "source_repo": "awesome-os/sectium-distributions",
+      "source_tag": "v0.4.0-components",
+      "bytes": 42821724,
+      "sha256": "8027458c5b7f730e47bbfff581e6454f2c54e598be80fc51c171e5df20b5b554",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/v8-shared-win64.b8p"
+    },
+    {
+      "filename": "v8-shared-win64.zip",
+      "role": "profile",
+      "source_repo": "awesome-os/sectium-browser",
+      "source_tag": "v0.6.1-baseline",
+      "bytes": 25210844,
+      "sha256": "1be3760e89a4b04b03aadb8a5071febf1fdcebc80bbe97f4c519cae8118364cb",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/v8-shared-win64.zip"
+    }
+  ],
+  "downstream_contract": {
+    "v8_shared_pack": "v8-shared-win64.b8p",
+    "display_abi_lib": "libsectium_display.dll",
+    "native_shim": "b8g-shim.exe",
+    "runtime_binary": "bun-neon-v8.exe",
+    "ghost_registry": {
+      "schema": "b8g-ghost-registry-v1",
+      "cas_layout": "<cas>/<sha256>/<filename>",
+      "ghost_release_repo": "awesome-os/b8g-ghost",
+      "shards_manifest": "ghost-shards-manifest.json"
+    }
+  }
+}
