@@ -1,0 +1,125 @@
+name: Release Sectium Browser (4-OS Binaries + App Pack + Installers)
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (e.g. v0.7.2)'
+        required: true
+        default: 'v0.7.2'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: mlugg/setup-zig@v2
+        with:
+          version: '0.14.1'
+
+      - name: Run Sectium Browser & AtlasKV Search Test Suite
+        run: |
+          node --test \
+            app/search/atlaskv-search.test.mts \
+            installer/release-profile.test.mts \
+            installer/security-hardening.test.mts \
+            shell/virtual-frame-shell.test.mts \
+            baseline-manifest.test.mts
+          sh -n installer/install.sh
+
+      - name: Cross-Compile 4-OS Native Launchers & Package App Pack
+        run: |
+          mkdir -p dist-release
+
+          # 1. Windows x64 (GUI subsystem with Lumi Hydration Splash)
+          zig cc -target x86_64-windows-gnu -O2 -mwindows \
+            launcher/sectium_browser_launcher.c \
+            -lgdi32 -luser32 -lole32 -lshell32 -lwininet \
+            -o dist-release/sectium-browser.exe
+
+          # 2. Linux x64 (musl static-friendly)
+          zig cc -target x86_64-linux-musl -O2 \
+            launcher/sectium_browser_launcher.c \
+            -o dist-release/sectium-browser-linux-x64
+
+          # 3. Linux ARM64 (musl)
+          zig cc -target aarch64-linux-musl -O2 \
+            launcher/sectium_browser_launcher.c \
+            -o dist-release/sectium-browser-linux-arm64
+
+          # 4. macOS ARM64 (Apple Silicon)
+          zig cc -target aarch64-macos -O2 \
+            launcher/sectium_browser_launcher.c \
+            -o dist-release/sectium-browser-macos-arm64
+
+          # 5. App pack (AtlasKV Search + Chrome-nudge-free Google + Sectium Canvas New Tab)
+          tar --zstd --exclude='search/*.test.mts' -cf dist-release/sectium-browser-app.tar.zst -C app .
+
+          # 6. Installers
+          cp installer/install.ps1 dist-release/install.ps1
+          cp installer/install.sh dist-release/install.sh
+          chmod +x dist-release/install.sh
+
+          # 7. Unified SHA256SUMS.txt
+          (cd dist-release && sha256sum \
+            sectium-browser.exe \
+            sectium-browser-linux-x64 \
+            sectium-browser-linux-arm64 \
+            sectium-browser-macos-arm64 \
+            sectium-browser-app.tar.zst \
+            install.ps1 \
+            install.sh > SHA256SUMS.txt)
+
+          ls -lh dist-release/
+          cat dist-release/SHA256SUMS.txt
+
+      - name: Publish Complete GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ inputs.tag }}"
+          if [ -z "$TAG" ]; then
+            TAG="${GITHUB_REF#refs/tags/}"
+          fi
+          cat > release-notes.md <<EOF
+          ## Sectium Browser ${TAG}
+
+          Sovereign Chromium 158+ / V8 15.8+ desktop browser with **AtlasKV Sovereign Search**, **3-layer Chrome-nudge-free Google web search** (zero DuckDuckGo), pure-art **Sectium Canvas** New Tab, and zero-duplication \`b8g-ghost @ cas-v1\` hydration.
+
+          ### Quick Install
+
+          **Windows (PowerShell):**
+          \`\`\`powershell
+          irm https://github.com/awesome-os/sectium-browser/releases/download/${TAG}/install.ps1 | iex
+          \`\`\`
+
+          **Linux (x64 / ARM64) & macOS (Apple Silicon):**
+          \`\`\`sh
+          curl -fsSL https://github.com/awesome-os/sectium-browser/releases/download/${TAG}/install.sh | sh
+          \`\`\`
+
+          ### Included Assets (SHA-256 Verified via \`SHA256SUMS.txt\`)
+          - \`sectium-browser.exe\` — Windows x64 native Lumi Hydration Splash launcher
+          - \`sectium-browser-linux-x64\` — Linux x64 native launcher
+          - \`sectium-browser-linux-arm64\` — Linux ARM64 native launcher
+          - \`sectium-browser-macos-arm64\` — macOS Apple Silicon native launcher
+          - \`sectium-browser-app.tar.zst\` — Multi-tab browser app (AtlasKV Search + nudge-free Google)
+          - \`install.ps1\` / \`install.sh\` — 1-line SHA-256 verified installers
+          EOF
+
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --title "Sectium Browser ${TAG} — AtlasKV Search & 4-OS Installers" --notes-file release-notes.md
+            gh release upload "$TAG" dist-release/* --clobber
+          else
+            gh release create "$TAG" dist-release/* \
+              --title "Sectium Browser ${TAG} — AtlasKV Search & 4-OS Installers" \
+              --notes-file release-notes.md
+          fi

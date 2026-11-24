@@ -38,7 +38,7 @@
 #endif
 
 #define SECTIUM_APP_KEY "sectium-browser-app.tar.zst"
-#define SECTIUM_LAUNCHER_VERSION "0.7.0"
+#define SECTIUM_LAUNCHER_VERSION "0.7.2"
 #define INDEX_URL "https://raw.githubusercontent.com/awesome-os/b8g-ghost/main/manifests/index.json"
 #define BLOB_BASE_URL "https://github.com/awesome-os/b8g-ghost/releases/download/cas-v1"
 #define MAX_PATH_BUF 1024
