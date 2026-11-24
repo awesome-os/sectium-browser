@@ -8,9 +8,9 @@ on:
         required: true
         default: 'v0.6.0-v8-cloud'
       build_flavor:
-        description: 'component (shared libv8.so for Sectium) or lo-monolith (libv8_monolith.a + headers + patches for just-js/lo & bun-neon-v8)'
+        description: 'component (default: dynamic shared libv8.so/.dll/.dylib hydrated via b8g-ghost cas-v1 for Sectium, just-js/lo & bun-neon-v8 — zero libv8_monolith bloat)'
         required: true
-        default: 'lo-monolith'
+        default: 'component'
       target_cpu:
         description: 'Target CPU architecture: x64 or arm64 (cross-compiled on ubuntu-latest)'
         required: true
@@ -57,7 +57,7 @@ jobs:
       - name: Setup depot_tools, Shallow Upstream V8 & Apply lo Fast-Call Patches
         env:
           TARGET_CPU: ${{ inputs.target_cpu || 'x64' }}
-          FLAVOR: ${{ inputs.build_flavor || 'lo-monolith' }}
+          FLAVOR: ${{ inputs.build_flavor || 'component' }}
         run: |
           mkdir -p /tmp/v8-work
           cd /tmp/v8-work
@@ -86,7 +86,7 @@ jobs:
       - name: Configure GN Args (component or lo-monolith)
         env:
           TARGET_CPU: ${{ inputs.target_cpu || 'x64' }}
-          FLAVOR: ${{ inputs.build_flavor || 'lo-monolith' }}
+          FLAVOR: ${{ inputs.build_flavor || 'component' }}
         run: |
           export PATH="/tmp/v8-work/depot_tools:$PATH"
           cd /tmp/v8-work/v8
