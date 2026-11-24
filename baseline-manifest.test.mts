@@ -3,7 +3,7 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
-import { buildRollingReleaseManifest } from './baseline-manifest.mts';
+import { buildRollingReleaseManifest, buildUnifiedGhostIndex } from './baseline-manifest.mts';
 
 test('buildRollingReleaseManifest assembles and verifies all required baseline roles', () => {
   const dir = mkdtempSync(join(tmpdir(), 'sectium-baseline-test-'));
@@ -36,6 +36,37 @@ test('buildRollingReleaseManifest assembles and verifies all required baseline r
     assert.equal(manifest.components.length, 8);
     assert.ok(sha256Sums.includes('v8-shared-win64.b8p'));
     assert.ok(sha256Sums.includes('lumi-white-dragon.ico'));
+
+    // Verify cross-repo unified ghost-index.json merger
+    writeFileSync(
+      join(dir, 'ghost-5os-manifest.json'),
+      JSON.stringify({
+        libs: [
+          {
+            filename: 'libbrotli-wasm32-wasi.wasm',
+            sha256: 'a'.repeat(64),
+            download_url: 'https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libbrotli-wasm32-wasi.wasm',
+          },
+        ],
+      })
+    );
+    writeFileSync(
+      join(dir, 'ghost-toolchains-manifest.json'),
+      JSON.stringify({
+        toolchains: [
+          {
+            filename: 'ghost-zig-0.14.0-win64.zip',
+            sha256: 'b'.repeat(64),
+            download_url: 'https://github.com/awesome-os/upstream-mirrors/releases/download/v0.1.0-ghost-toolchains/ghost-zig-0.14.0-win64.zip',
+          },
+        ],
+      })
+    );
+    const idx = buildUnifiedGhostIndex(dir, manifest);
+    assert.equal(idx.schema, 'b8g-ghost-unified-index-v1');
+    assert.equal(idx.total_entries, 10);
+    assert.equal(idx.entries['libbrotli-wasm32-wasi.wasm']?.category, 'holo-5os');
+    assert.equal(idx.entries['ghost-zig-0.14.0-win64.zip']?.category, 'toolchain');
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

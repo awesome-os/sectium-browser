@@ -1,6 +1,24 @@
 import { createHash } from 'node:crypto';
-import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+
+export interface GhostIndexEntry {
+  filename: string;
+  sha256: string;
+  cas_key: string;
+  category: 'baseline' | 'shard' | 'holo-5os' | 'toolchain';
+  source_manifest: string;
+  download_url: string;
+}
+
+export interface UnifiedGhostIndex {
+  schema: 'b8g-ghost-unified-index-v1';
+  baseline_tag: string;
+  generated_at: string;
+  cas_layout: '<cas>/<sha256>/<filename>';
+  total_entries: number;
+  entries: Record<string, GhostIndexEntry>;
+}
 
 export interface BaselineComponentEntry {
   filename: string;
@@ -47,6 +65,7 @@ export interface RollingReleaseManifest {
       cas_layout: '<cas>/<sha256>/<filename>';
       ghost_release_repo: 'awesome-os/b8g-ghost';
       shards_manifest: 'ghost-shards-manifest.json';
+      unified_index: 'ghost-index.json';
     };
   };
 }
@@ -165,6 +184,7 @@ export function buildRollingReleaseManifest(opts: {
         cas_layout: '<cas>/<sha256>/<filename>',
         ghost_release_repo: 'awesome-os/b8g-ghost',
         shards_manifest: 'ghost-shards-manifest.json',
+        unified_index: 'ghost-index.json',
       },
     },
   };
@@ -172,10 +192,77 @@ export function buildRollingReleaseManifest(opts: {
   return { manifest, sha256Sums: sumLines.join('\n') + '\n' };
 }
 
+/**
+ * Merges RollingReleaseManifest + all cross-repo Ghost sub-manifests (shards, holo-4os/5os, toolchains)
+ * into a single flat O(1) resolver index (`ghost-index.json`) so clients only ever fetch 1 URL.
+ */
+export function buildUnifiedGhostIndex(
+  distDir: string,
+  manifest: RollingReleaseManifest
+): UnifiedGhostIndex {
+  const entries: Record<string, GhostIndexEntry> = {};
+
+  for (const c of manifest.components) {
+    entries[c.filename] = {
+      filename: c.filename,
+      sha256: c.sha256,
+      cas_key: c.sha256.slice(0, 16),
+      category: 'baseline',
+      source_manifest: 'RollingReleaseManifest.json',
+      download_url: c.download_url,
+    };
+  }
+
+  const subManifests: Array<{ file: string; category: GhostIndexEntry['category']; arrayKey: string }> = [
+    { file: 'ghost-shards-manifest.json', category: 'shard', arrayKey: 'shards' },
+    { file: 'ghost-4os-manifest.json', category: 'holo-5os', arrayKey: 'libs' },
+    { file: 'ghost-5os-manifest.json', category: 'holo-5os', arrayKey: 'libs' },
+    { file: 'ghost-toolchains-manifest.json', category: 'toolchain', arrayKey: 'toolchains' },
+  ];
+
+  for (const sub of subManifests) {
+    const full = join(distDir, sub.file);
+    if (!existsSync(full)) continue;
+    const parsed = JSON.parse(readFileSync(full, 'utf8')) as Record<string, unknown>;
+    const list = (parsed[sub.arrayKey] ?? parsed['libs'] ?? parsed['entries'] ?? []) as Array<
+      Record<string, unknown>
+    >;
+    if (!Array.isArray(list)) continue;
+    for (const item of list) {
+      const filename = String(item['filename'] ?? item['file'] ?? '');
+      const sha256 = String(item['sha256'] ?? '').toLowerCase();
+      const downloadUrl = String(item['download_url'] ?? item['url'] ?? '');
+      if (!filename || !sha256 || !downloadUrl) continue;
+      entries[filename] = {
+        filename,
+        sha256,
+        cas_key: sha256.slice(0, 16),
+        category: sub.category,
+        source_manifest: sub.file,
+        download_url: downloadUrl,
+      };
+    }
+  }
+
+  const sortedEntries: Record<string, GhostIndexEntry> = {};
+  for (const k of Object.keys(entries).sort()) {
+    sortedEntries[k] = entries[k]!;
+  }
+
+  return {
+    schema: 'b8g-ghost-unified-index-v1',
+    baseline_tag: manifest.baseline_tag,
+    generated_at: manifest.generated_at,
+    cas_layout: '<cas>/<sha256>/<filename>',
+    total_entries: Object.keys(sortedEntries).length,
+    entries: sortedEntries,
+  };
+}
+
 if (import.meta.url === `file://${process.argv[1]?.replace(/\\/g, '/')}` || process.argv[1]?.endsWith('baseline-manifest.mts')) {
   const distDir = process.argv[2] ?? 'dist-baseline';
-  const baselineTag = process.env.BASELINE_TAG ?? 'v0.5.0-baseline';
-  const previousTag = process.env.PREVIOUS_TAG ?? 'v0.4.0-components';
+  const baselineTag = process.env.BASELINE_TAG ?? 'v0.7.0-baseline';
+  const previousTag = process.env.PREVIOUS_TAG ?? 'v0.6.1-baseline';
   const componentsTag = process.env.COMPONENTS_TAG ?? 'v0.4.0-components';
   const gravityTag = process.env.GRAVITY_TAG ?? 'v0.5.0-gravity';
   const displayTag = process.env.DISPLAY_TAG ?? 'v0.4.0';
@@ -189,9 +276,11 @@ if (import.meta.url === `file://${process.argv[1]?.replace(/\\/g, '/')}` || proc
     displayTag,
   });
 
+  const unifiedIndex = buildUnifiedGhostIndex(distDir, manifest);
   writeFileSync(join(distDir, 'RollingReleaseManifest.json'), JSON.stringify(manifest, null, 2) + '\n');
+  writeFileSync(join(distDir, 'ghost-index.json'), JSON.stringify(unifiedIndex, null, 2) + '\n');
   writeFileSync(join(distDir, 'SHA256SUMS.txt'), sha256Sums);
   console.log(
-    `[sectium-baseline] Assembled ${manifest.baseline_tag}: ${manifest.components.length} verified components (previous=${manifest.previous_tag})`
+    `[sectium-baseline] Assembled ${manifest.baseline_tag}: ${manifest.components.length} baseline components | ${unifiedIndex.total_entries} unified ghost-index entries (previous=${manifest.previous_tag})`
   );
 }

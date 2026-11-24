@@ -79,22 +79,27 @@ jobs:
             --pattern "0*.exe" \
             --dir dist-baseline --clobber
 
-          echo "Pulling fresh cloud-compiled upstream V8 Linux + Win64 (v0.6.0-v8-cloud) + 10-shard Ghost manifest..."
+          echo "Pulling fresh cloud-compiled upstream V8 (Linux x64/ARM64 + Win64 + macOS ARM64) + 10-shard Ghost manifest..."
           gh release download "v0.6.0-v8-cloud" \
             --repo awesome-os/sectium-browser \
             --pattern "v8-shared-linux-x64.tar.gz" \
             --pattern "v8-shared-win64.zip" \
             --pattern "v8-include-*.tar.gz" \
             --dir dist-baseline --clobber || true
+          gh release download "v0.7.0-v8-cloud" \
+            --repo awesome-os/sectium-browser \
+            --pattern "v8-shared-macos-arm64.tar.gz" \
+            --pattern "v8-shared-linux-arm64.tar.gz" \
+            --dir dist-baseline --clobber || true
           gh release download "v0.6.0-chromium-shards" \
             --repo awesome-os/sectium-browser \
             --pattern "ghost-shards-manifest.json" \
             --dir dist-baseline --clobber || true
 
-          echo "Pulling Zero-CMake 4-OS Holo Shards + Ghost Build Stacks manifests (awesome-os/upstream-mirrors)..."
-          gh release download "v0.1.0-holo-4os" \
+          echo "Pulling Zero-CMake 5-OS Holo Shards + Ghost Build Stacks manifests (awesome-os/upstream-mirrors)..."
+          gh release download "v0.2.0-holo-5os" \
             --repo awesome-os/upstream-mirrors \
-            --pattern "ghost-4os-manifest.json" \
+            --pattern "ghost-5os-manifest.json" \
             --dir dist-baseline --clobber || true
           gh release download "v0.1.0-ghost-toolchains" \
             --repo awesome-os/upstream-mirrors \
