@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sectium AtlasKV Search</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      min-height: 100%;
+      background: radial-gradient(circle at 20% 10%, #111b2e 0%, #0b0e14 60%);
+      color: #e2e8f0;
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      font-size: 14px;
+    }
+    .wrap { max-width: 780px; margin: 0 auto; padding: 36px 20px 64px; }
+    .hdr { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: 0.04em; color: #f8fafc; }
+    .pill {
+      font-size: 11px; color: #38bdf8; background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3); padding: 3px 9px; border-radius: 999px;
+    }
+    .search-box { display: flex; gap: 8px; margin-bottom: 18px; }
+    .search-box input {
+      flex: 1; height: 42px; padding: 0 16px; border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.25); background: rgba(15, 23, 42, 0.85);
+      color: #f8fafc; font-size: 15px; outline: none;
+    }
+    .search-box input:focus { border-color: #38bdf8; }
+    .btn {
+      height: 42px; padding: 0 16px; border-radius: 12px; border: 1px solid rgba(56, 189, 248, 0.35);
+      background: rgba(56, 189, 248, 0.16); color: #f8fafc; font-weight: 600; cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn:hover { background: rgba(56, 189, 248, 0.28); }
+    .btn-google {
+      border-color: rgba(148, 163, 184, 0.3); background: rgba(255, 255, 255, 0.06);
+      text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-google:hover { background: rgba(255, 255, 255, 0.14); }
+    .meta { font-size: 12px; color: #94a3b8; margin-bottom: 16px; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+    .results { display: flex; flex-direction: column; gap: 10px; }
+    .card {
+      display: block; text-decoration: none; padding: 14px 16px; border-radius: 12px;
+      background: rgba(15, 23, 42, 0.72); border: 1px solid rgba(148, 163, 184, 0.16);
+      transition: border-color 120ms ease, background 120ms ease;
+    }
+    .card:hover { border-color: rgba(56, 189, 248, 0.5); background: rgba(15, 23, 42, 0.95); }
+    .card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+    .card-title { color: #f8fafc; font-size: 15px; font-weight: 600; }
+    .card-kind {
+      font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em;
+      padding: 2px 7px; border-radius: 999px; background: rgba(167, 139, 250, 0.14); color: #c4b5fd;
+    }
+    .card-url { font-size: 12px; color: #38bdf8; word-break: break-all; }
+    .empty {
+      padding: 22px; border-radius: 12px; border: 1px dashed rgba(148, 163, 184, 0.25);
+      color: #94a3b8; text-align: center;
+    }
+    .web-bar {
+      margin-top: 20px; padding: 14px 16px; border-radius: 12px;
+      background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.22);
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    }
+    .web-bar span { font-size: 13px; color: #cbd5e1; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="hdr">
+      <div class="brand">SECTIUM · AtlasKV Search</div>
+      <span id="stats" class="pill">AtlasKV · Zero DDG · Nudge-Free Google</span>
+    </header>
+    <form id="q-form" class="search-box" autocomplete="off">
+      <input id="q-input" type="text" placeholder="Search AtlasKV local index, b8g-ghost CAS, or the web via Google (!g)..." spellcheck="false" autofocus />
+      <button class="btn" type="submit">AtlasKV</button>
+      <a id="google-btn" class="btn btn-google" href="https://www.google.com">Google Web &#8599;</a>
+    </form>
+    <div id="meta" class="meta"></div>
+    <section id="results" class="results"></section>
+    <div id="web-bar" class="web-bar" hidden>
+      <span id="web-hint">Want live web results? Continue to Google (Chrome-install nudges blocked).</span>
+      <a id="google-cta" class="btn btn-google" href="https://www.google.com">Search on Google &#8599;</a>
+    </div>
+  </main>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const input = document.getElementById('q-input');
+    const form = document.getElementById('q-form');
+    const resultsEl = document.getElementById('results');
+    const metaEl = document.getElementById('meta');
+    const statsEl = document.getElementById('stats');
+    const googleBtn = document.getElementById('google-btn');
+    const googleCta = document.getElementById('google-cta');
+    const webBar = document.getElementById('web-bar');
+
+    function googleUrlFor(q) {
+      return 'https://www.google.com/search?q=' + encodeURIComponent(q.trim());
+    }
+
+    async function runSearch(rawQuery) {
+      const q = (rawQuery || '').trim();
+      input.value = q;
+      const gUrl = q ? googleUrlFor(q) : 'https://www.google.com';
+      googleBtn.href = gUrl;
+      googleCta.href = gUrl;
+
+      if (!q) {
+        metaEl.textContent = 'Type a query to search your local AtlasKV index + b8g-ghost CAS, or prefix !g for Google Web.';
+        resultsEl.innerHTML = '';
+        webBar.hidden = true;
+        return;
+      }
+
+      document.title = q + ' — Sectium AtlasKV Search';
+      const t0 = performance.now();
+      let payload = null;
+      if (window.sectiumSearch && typeof window.sectiumSearch.query === 'function') {
+        payload = await window.sectiumSearch.query(q);
+      }
+      const elapsed = (performance.now() - t0).toFixed(1);
+
+      if (!payload) {
+        window.location.href = gUrl;
+        return;
+      }
+
+      statsEl.textContent = `AtlasKV · ${payload.totalIndexed} indexed · ${elapsed} ms`;
+      metaEl.textContent = `${payload.results.length} AtlasKV match(es) for "${q}" — tip: prefix !g for direct Google Web`;
+      webBar.hidden = false;
+      resultsEl.innerHTML = '';
+
+      if (payload.results.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'empty';
+        empty.textContent = `No local AtlasKV matches for "${q}". Click "Search on Google" (or press Shift+Enter) for nudge-free web results.`;
+        resultsEl.appendChild(empty);
+        return;
+      }
+
+      for (const r of payload.results) {
+        const a = document.createElement('a');
+        a.className = 'card';
+        a.href = r.url;
+        const top = document.createElement('div');
+        top.className = 'card-top';
+        const title = document.createElement('span');
+        title.className = 'card-title';
+        title.textContent = r.title;
+        const kind = document.createElement('span');
+        kind.className = 'card-kind';
+        kind.textContent = `${r.kind} · ${(r.score * 100).toFixed(0)}%`;
+        top.append(title, kind);
+        const url = document.createElement('div');
+        url.className = 'card-url';
+        url.textContent = r.url;
+        a.append(top, url);
+        resultsEl.appendChild(a);
+      }
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const val = input.value.trim();
+      if (!val) return;
+      if (/^(!g|g)\s+/i.test(val)) {
+        window.location.href = googleUrlFor(val.replace(/^(!g|g)\s+/i, ''));
+        return;
+      }
+      const next = new URL(window.location.href);
+      next.searchParams.set('q', val);
+      history.replaceState(null, '', next.toString());
+      runSearch(val);
+    });
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.shiftKey) {
+        e.preventDefault();
+        const val = input.value.trim();
+        if (val) window.location.href = googleUrlFor(val);
+      }
+    });
+
+    runSearch(params.get('q') || '');
+  </script>
+</body>
+</html>

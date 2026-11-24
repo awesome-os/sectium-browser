@@ -1,7 +1,7 @@
 {
   "name": "sectium-browser",
-  "version": "0.7.1",
-  "description": "Sectium Browser — Sovereign Chromium 158+ / V8 15.8+ multi-tab browser with pure-art Sectium Canvas New Tab, hydrated on shared b8g-ghost cas-v1 Electron",
+  "version": "0.7.2",
+  "description": "Sectium Browser — Sovereign Chromium 158+ / V8 15.8+ multi-tab browser with AtlasKV local search, Chrome-nudge-free Google web search, and pure-art Sectium Canvas New Tab",
   "main": "main.js",
   "license": "BSD-3-Clause"
 }

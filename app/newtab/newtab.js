@@ -28,10 +28,15 @@
   setInterval(updateClock, 5000);
 
   if (formEl && inputEl) {
-    formEl.addEventListener('submit', (e) => {
+    formEl.addEventListener('submit', async (e) => {
       e.preventDefault();
       const raw = inputEl.value.trim();
       if (!raw) return;
+      if (/^(!g|g)\s+/i.test(raw)) {
+        const q = raw.replace(/^(!g|g)\s+/i, '');
+        window.location.href = `https://www.google.com/search?q=${encodeURIComponent(q)}`;
+        return;
+      }
       if (/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(raw)) {
         window.location.href = raw;
         return;
@@ -40,7 +45,18 @@
         window.location.href = /^localhost/i.test(raw) ? `http://${raw}` : `https://${raw}`;
         return;
       }
-      window.location.href = `https://duckduckgo.com/?q=${encodeURIComponent(raw)}`;
+      if (window.sectiumSearch && typeof window.sectiumSearch.query === 'function') {
+        try {
+          const hit = await window.sectiumSearch.query(raw, 5);
+          if (hit && Array.isArray(hit.results) && hit.results.length > 0 && hit.results[0].score >= 0.45) {
+            window.location.href = `../search/search.html?q=${encodeURIComponent(raw)}`;
+            return;
+          }
+        } catch {
+          // Fall through to Google Web Search
+        }
+      }
+      window.location.href = `https://www.google.com/search?q=${encodeURIComponent(raw)}`;
     });
   }
 
