@@ -77,8 +77,10 @@ function createTab(initialUrl) {
       sandbox: true,
       contextIsolation: true,
       nodeIntegration: false,
+      backgroundThrottling: true,
     },
   });
+  view.webContents.setBackgroundThrottling(true);
   const target = normalizeUrl(initialUrl);
   const tab = { id, view, title: 'New Tab', url: target, loading: true };
   tabs.set(id, tab);
