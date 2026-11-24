@@ -1,4 +1,4 @@
-﻿# Sectium Browser — Sovereign 1-Line Windows Installer
+# Sectium Browser — Sovereign 1-Line Windows Installer
 # Usage: irm https://github.com/awesome-os/sectium-browser/releases/latest/download/install.ps1 | iex
 
 $ErrorActionPreference = 'Stop'
