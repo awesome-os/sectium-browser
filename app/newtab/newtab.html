@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>New Tab — Sectium</title>
+  <link rel="icon" type="image/svg+xml" href="lumi.svg" />
+  <link rel="stylesheet" href="newtab.css" />
+</head>
+<body>
+  <canvas id="aurora" aria-hidden="true"></canvas>
+  <main class="stage">
+    <div class="emblem" aria-hidden="true">
+      <img src="lumi.svg" alt="" width="84" height="84" />
+    </div>
+    <time id="clock" class="clock" datetime="">--:--</time>
+    <p id="date" class="date"></p>
+    <form id="omnibar-form" class="omnibar" autocomplete="off">
+      <input
+        id="omnibar-input"
+        type="text"
+        placeholder="Search or enter address"
+        aria-label="Search or enter address"
+        autofocus
+        spellcheck="false"
+      />
+    </form>
+  </main>
+  <footer class="watermark" aria-hidden="true">SECTIUM</footer>
+  <div class="device-corner">
+    <button id="device-pill" class="device-pill" type="button" title="Attach to Sectium Host Device / Workspace" aria-expanded="false">
+      <span class="device-chev" aria-hidden="true">&gt;&lt;</span>
+      <span id="device-label">local · sectium-dev</span>
+    </button>
+    <div id="device-menu" class="device-menu" hidden role="menu" aria-label="Switch Sectium Host Device">
+      <div class="device-menu-title">Attach Host Device</div>
+      <button type="button" class="device-opt" data-endpoint="\\.\pipe\sectium-dev" data-label="local · sectium-dev">local · \\.\pipe\sectium-dev</button>
+      <button type="button" class="device-opt" data-endpoint="tls://pve-sectium-01:7443" data-label="pve-sectium-01 · mTLS">pve-sectium-01 · Proxmox mTLS</button>
+      <button type="button" class="device-opt" data-endpoint="ssh://t2-sde-baremetal" data-label="t2-sde · bare-metal">t2-sde · bare-metal UEFI</button>
+      <form id="device-custom-form" class="device-custom">
+        <input id="device-custom-input" type="text" placeholder="tls://host:port or pipe..." spellcheck="false" />
+      </form>
+    </div>
+  </div>
+  <script src="newtab.js"></script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Sectium Browser</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%; overflow: hidden; background: #0b0e14; color: #e2e8f0;
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 12px;
+      user-select: none;
+    }
+    .bar {
+      height: 44px; display: flex; align-items: center; gap: 6px; padding: 0 10px;
+      background: linear-gradient(180deg, #121722 0%, #0d111a 100%);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+    }
+    .nav { display: flex; gap: 2px; }
+    .btn {
+      width: 28px; height: 28px; border: none; border-radius: 6px; background: transparent;
+      color: #cbd5e1; cursor: pointer; display: grid; place-items: center; font-size: 14px;
+    }
+    .btn:hover:not(:disabled) { background: rgba(148, 163, 184, 0.14); color: #fff; }
+    .btn:disabled { opacity: 0.35; cursor: default; }
+    .tabs {
+      display: flex; align-items: center; gap: 4px; max-width: 46%; overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      display: flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px;
+      border-radius: 7px; background: rgba(255,255,255,0.03); color: #94a3b8;
+      cursor: pointer; white-space: nowrap; max-width: 180px; border: 1px solid transparent;
+    }
+    .tab.active {
+      background: rgba(56, 189, 248, 0.14); color: #f8fafc;
+      border-color: rgba(56, 189, 248, 0.35);
+    }
+    .tab-title { overflow: hidden; text-overflow: ellipsis; max-width: 130px; }
+    .tab-x {
+      border: none; background: transparent; color: inherit; opacity: 0.6;
+      cursor: pointer; font-size: 13px; line-height: 1; padding: 0 2px;
+    }
+    .tab-x:hover { opacity: 1; color: #f87171; }
+    .omni {
+      flex: 1; display: flex; align-items: center;
+    }
+    .omni input {
+      width: 100%; height: 28px; padding: 0 12px; border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.2); background: rgba(15, 23, 42, 0.85);
+      color: #f8fafc; font-size: 12px; outline: none;
+    }
+    .omni input:focus { border-color: #38bdf8; background: #0f172a; }
+    .badge {
+      font-size: 10px; color: #38bdf8; background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25); padding: 2px 7px; border-radius: 999px;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <div class="nav">
+      <button id="back" class="btn" title="Back">&#8592;</button>
+      <button id="fwd" class="btn" title="Forward">&#8594;</button>
+      <button id="reload" class="btn" title="Reload">&#8635;</button>
+    </div>
+    <div id="tabs" class="tabs"></div>
+    <button id="add" class="btn" title="New Tab">+</button>
+    <form id="omni-form" class="omni">
+      <input id="omni" type="text" placeholder="Search or enter address (Sectium Chromium 158+)" spellcheck="false" />
+    </form>
+    <span id="badge" class="badge">Sectium v0.7</span>
+    <button id="devtools" class="btn" title="Toggle DevTools">&lt;/&gt;</button>
+  </div>
+  <script>
+    const tabsEl = document.getElementById('tabs');
+    const omni = document.getElementById('omni');
+    const backBtn = document.getElementById('back');
+    const fwdBtn = document.getElementById('fwd');
+    const badge = document.getElementById('badge');
+
+    document.getElementById('back').onclick = () => window.sectiumChrome.back();
+    document.getElementById('fwd').onclick = () => window.sectiumChrome.forward();
+    document.getElementById('reload').onclick = () => window.sectiumChrome.reload();
+    document.getElementById('add').onclick = () => window.sectiumChrome.newTab();
+    document.getElementById('devtools').onclick = () => window.sectiumChrome.toggleDevTools();
+    document.getElementById('omni-form').onsubmit = (e) => {
+      e.preventDefault();
+      window.sectiumChrome.navigate(omni.value);
+      omni.blur();
+    };
+
+    window.sectiumChrome.onTabs(({ tabs, versions }) => {
+      if (versions && versions.chromium) {
+        badge.textContent = 'Cr ' + versions.chromium.split('.')[0] + ' · V8 ' + versions.v8.split('.').slice(0,2).join('.');
+      }
+      tabsEl.innerHTML = '';
+      for (const t of tabs) {
+        const div = document.createElement('div');
+        div.className = 'tab' + (t.active ? ' active' : '');
+        div.onclick = () => window.sectiumChrome.activateTab(t.id);
+        const span = document.createElement('span');
+        span.className = 'tab-title';
+        span.textContent = t.loading ? '… ' + t.title : t.title;
+        const x = document.createElement('button');
+        x.className = 'tab-x';
+        x.textContent = '×';
+        x.onclick = (e) => { e.stopPropagation(); window.sectiumChrome.closeTab(t.id); };
+        div.append(span, x);
+        tabsEl.append(div);
+        if (t.active) {
+          if (document.activeElement !== omni) omni.value = t.url || '';
+          backBtn.disabled = !t.canGoBack;
+          fwdBtn.disabled = !t.canGoForward;
+        }
+      }
+    });
+  </script>
+</body>
+</html>

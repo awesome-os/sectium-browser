@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Sectium Animated White Dragon Logo">
+  <defs>
+    <linearGradient id="sectBgA" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070d19" />
+      <stop offset="100%" stop-color="#111d36" />
+    </linearGradient>
+    <linearGradient id="ringGradA" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="50%" stop-color="#a78bfa" />
+      <stop offset="100%" stop-color="#34d399" />
+    </linearGradient>
+    <linearGradient id="dragonGradA" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="70%" stop-color="#e0f2fe" />
+      <stop offset="100%" stop-color="#bae6fd" />
+    </linearGradient>
+    <style>
+      @keyframes spinRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      @keyframes floatDragon { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-6px); } }
+      .ring-spin { transform-origin: 128px 128px; animation: spinRing 18s linear infinite; }
+      .dragon-float { animation: floatDragon 3.4s ease-in-out infinite; }
+    </style>
+  </defs>
+  <circle cx="128" cy="128" r="120" fill="url(#sectBgA)" stroke="url(#ringGradA)" stroke-width="10" />
+  <circle class="ring-spin" cx="128" cy="128" r="96" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-dasharray="14 10" opacity="0.6" />
+  <g class="dragon-float">
+    <path d="M58 142 C46 106, 74 86, 102 106 C108 74, 128 54, 152 62 C164 66, 174 78, 170 92 C188 94, 206 112, 198 142 C192 164, 168 178, 146 174 C138 190, 114 198, 92 188 C70 178, 64 162, 58 142 Z" fill="url(#dragonGradA)" stroke="#7dd3fc" stroke-width="3" />
+    <path d="M98 124 C74 102, 54 110, 56 132 C58 146, 78 152, 98 142 Z" fill="#e0f2fe" stroke="#38bdf8" stroke-width="2.5" />
+    <path d="M158 124 C182 102, 202 110, 200 132 C198 146, 178 152, 158 142 Z" fill="#e0f2fe" stroke="#38bdf8" stroke-width="2.5" />
+    <polygon points="128,82 135,94 128,104 121,94" fill="#38bdf8" />
+    <circle cx="114" cy="120" r="6" fill="#0f172a" />
+    <circle cx="142" cy="120" r="6" fill="#0f172a" />
+    <circle cx="116" cy="118" r="2.4" fill="#38bdf8" />
+    <circle cx="144" cy="118" r="2.4" fill="#38bdf8" />
+    <path d="M119 136 Q128 144 137 136" fill="none" stroke="#0f172a" stroke-width="3" stroke-linecap="round" />
+  </g>
+</svg>

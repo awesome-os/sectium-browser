@@ -1,0 +1,9 @@
+{
+  "manifest_version": 3,
+  "name": "Sectium Canvas",
+  "version": "0.1.0",
+  "description": "Minimal sovereign art New Tab canvas for Sectium Browser.",
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  }
+}
