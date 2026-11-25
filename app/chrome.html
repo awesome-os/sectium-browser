@@ -10,112 +10,521 @@
       font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 12px;
       user-select: none;
     }
+    /* Top Toolbar (44px) */
     .bar {
-      height: 44px; display: flex; align-items: center; gap: 6px; padding: 0 10px;
-      background: linear-gradient(180deg, #121722 0%, #0d111a 100%);
+      position: fixed; top: 0; left: 0; right: 0; height: 44px;
+      display: flex; align-items: center; gap: 6px; padding: 0 10px;
+      background: linear-gradient(180deg, #131825 0%, #0d111b 100%);
       border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+      z-index: 20;
     }
-    .nav { display: flex; gap: 2px; }
+    .nav { display: flex; gap: 2px; align-items: center; }
     .btn {
-      width: 28px; height: 28px; border: none; border-radius: 6px; background: transparent;
+      width: 28px; height: 28px; border: none; border-radius: 7px; background: transparent;
       color: #cbd5e1; cursor: pointer; display: grid; place-items: center; font-size: 14px;
+      transition: background 120ms ease, color 120ms ease;
     }
-    .btn:hover:not(:disabled) { background: rgba(148, 163, 184, 0.14); color: #fff; }
+    .btn:hover:not(:disabled) { background: rgba(148, 163, 184, 0.16); color: #fff; }
+    .btn.active { background: rgba(56, 189, 248, 0.18); color: #38bdf8; }
     .btn:disabled { opacity: 0.35; cursor: default; }
-    .tabs {
-      display: flex; align-items: center; gap: 4px; max-width: 46%; overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .tabs::-webkit-scrollbar { display: none; }
-    .tab {
-      display: flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px;
-      border-radius: 7px; background: rgba(255,255,255,0.03); color: #94a3b8;
-      cursor: pointer; white-space: nowrap; max-width: 180px; border: 1px solid transparent;
-    }
-    .tab.active {
-      background: rgba(56, 189, 248, 0.14); color: #f8fafc;
-      border-color: rgba(56, 189, 248, 0.35);
-    }
-    .tab-title { overflow: hidden; text-overflow: ellipsis; max-width: 130px; }
-    .tab-x {
-      border: none; background: transparent; color: inherit; opacity: 0.6;
-      cursor: pointer; font-size: 13px; line-height: 1; padding: 0 2px;
-    }
-    .tab-x:hover { opacity: 1; color: #f87171; }
-    .omni {
-      flex: 1; display: flex; align-items: center;
-    }
+    .omni { flex: 1; display: flex; align-items: center; }
     .omni input {
       width: 100%; height: 28px; padding: 0 12px; border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.2); background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.22); background: rgba(15, 23, 42, 0.88);
       color: #f8fafc; font-size: 12px; outline: none;
     }
     .omni input:focus { border-color: #38bdf8; background: #0f172a; }
+    .pane-pill {
+      display: none; align-items: center; gap: 4px; height: 24px; padding: 0 8px;
+      border-radius: 999px; font-size: 10px; font-weight: 600;
+      background: rgba(56, 189, 248, 0.12); color: #7dd3fc;
+      border: 1px solid rgba(56, 189, 248, 0.3); cursor: pointer; white-space: nowrap;
+    }
+    .pane-pill.visible { display: inline-flex; }
     .badge {
       font-size: 10px; color: #38bdf8; background: rgba(56, 189, 248, 0.1);
       border: 1px solid rgba(56, 189, 248, 0.25); padding: 2px 7px; border-radius: 999px;
       white-space: nowrap;
     }
+
+    /* Left Collapsible Vertical Tab Sidebar */
+    .sidebar {
+      position: fixed; top: 44px; left: 0; bottom: 0; width: 52px;
+      display: flex; flex-direction: column;
+      background: #101522;
+      border-right: 1px solid rgba(148, 163, 184, 0.14);
+      padding: 6px; gap: 6px;
+      z-index: 15;
+    }
+    .sidebar.expanded { width: 248px; }
+
+    .sb-top { display: flex; flex-direction: column; gap: 4px; }
+    .sb-action {
+      display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 9px;
+      border: 1px solid transparent; border-radius: 8px;
+      background: rgba(255, 255, 255, 0.04); color: #cbd5e1;
+      cursor: pointer; font-size: 12px; text-align: left; width: 100%;
+      overflow: hidden; white-space: nowrap;
+    }
+    .sidebar:not(.expanded) .sb-action { justify-content: center; padding: 0; }
+    .sb-action:hover { background: rgba(148, 163, 184, 0.16); color: #fff; }
+    .sb-action.active {
+      background: rgba(56, 189, 248, 0.18); border-color: rgba(56, 189, 248, 0.38); color: #f8fafc;
+    }
+    .sb-action .lbl { display: none; }
+    .sidebar.expanded .sb-action .lbl { display: inline; }
+
+    .sb-search-wrap { display: none; }
+    .sidebar.expanded .sb-search-wrap.open { display: block; }
+    .sb-search-input {
+      width: 100%; height: 28px; padding: 0 10px; border-radius: 7px;
+      border: 1px solid rgba(56, 189, 248, 0.45); background: #0b101b;
+      color: #f8fafc; font-size: 12px; outline: none;
+    }
+    .sb-group-create { display: none; gap: 4px; }
+    .sidebar.expanded .sb-group-create.open { display: flex; }
+    .sb-group-create input {
+      flex: 1; min-width: 0; height: 26px; padding: 0 8px; border-radius: 6px;
+      border: 1px solid rgba(148, 163, 184, 0.3); background: #0b101b; color: #f8fafc; font-size: 11px; outline: none;
+    }
+    .sb-group-create button {
+      height: 26px; padding: 0 8px; border-radius: 6px; border: none;
+      background: #0284c7; color: #fff; font-size: 11px; cursor: pointer;
+    }
+
+    .sb-divider { height: 1px; background: rgba(148, 163, 184, 0.12); margin: 2px 2px; }
+
+    .sb-tabs {
+      flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 3px;
+      scrollbar-width: thin; scrollbar-color: rgba(148,163,184,0.25) transparent;
+    }
+
+    /* Tab Group Section */
+    .group-block {
+      display: flex; flex-direction: column; gap: 2px;
+      padding: 2px 0 4px 0;
+    }
+    .group-header {
+      display: flex; align-items: center; gap: 6px; height: 24px; padding: 0 6px;
+      border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600; color: #e2e8f0;
+    }
+    .group-header:hover { background: rgba(255, 255, 255, 0.06); }
+    .group-dot {
+      width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0;
+    }
+    .group-title {
+      flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: none;
+    }
+    .sidebar.expanded .group-title { display: inline; }
+    .group-count { font-size: 10px; opacity: 0.65; display: none; }
+    .sidebar.expanded .group-count { display: inline; }
+    .group-mini-btn {
+      display: none; border: none; background: transparent; color: #94a3b8;
+      cursor: pointer; font-size: 12px; padding: 0 3px;
+    }
+    .sidebar.expanded .group-header:hover .group-mini-btn { display: inline; }
+    .group-mini-btn:hover { color: #fff; }
+    .group-items {
+      display: flex; flex-direction: column; gap: 2px;
+      border-left: 2px solid transparent; padding-left: 4px; margin-left: 4px;
+    }
+    .sidebar:not(.expanded) .group-items { padding-left: 2px; margin-left: 2px; }
+
+    /* Vertical Tab Row */
+    .vtab {
+      position: relative; display: flex; align-items: center; gap: 8px;
+      height: 32px; padding: 0 7px; border-radius: 8px;
+      background: transparent; color: #94a3b8; cursor: pointer;
+      border: 1px solid transparent; flex-shrink: 0;
+    }
+    .sidebar:not(.expanded) .vtab { justify-content: center; padding: 0; }
+    .vtab:hover { background: rgba(255, 255, 255, 0.06); color: #e2e8f0; }
+    .vtab.active {
+      background: rgba(56, 189, 248, 0.14); color: #f8fafc;
+      border-color: rgba(56, 189, 248, 0.35);
+    }
+    .vtab.split-secondary {
+      background: rgba(167, 139, 250, 0.14); color: #f8fafc;
+      border-color: rgba(167, 139, 250, 0.4);
+    }
+    .vtab-ico {
+      width: 18px; height: 18px; border-radius: 4px; flex-shrink: 0;
+      display: grid; place-items: center; font-size: 10px; font-weight: 700;
+      background: rgba(148, 163, 184, 0.16); color: #e2e8f0; overflow: hidden;
+    }
+    .vtab-ico img { width: 16px; height: 16px; object-fit: contain; display: block; }
+    .vtab-title {
+      flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      display: none;
+    }
+    .sidebar.expanded .vtab-title { display: block; }
+    .vtab-split-tag {
+      display: none; font-size: 9px; font-weight: 700; padding: 1px 4px; border-radius: 4px;
+      background: rgba(167, 139, 250, 0.25); color: #ddd6fe;
+    }
+    .sidebar.expanded .vtab.split-secondary .vtab-split-tag { display: inline; }
+    .vtab-actions {
+      display: none; align-items: center; gap: 2px;
+    }
+    .sidebar.expanded .vtab:hover .vtab-actions,
+    .sidebar.expanded .vtab.active .vtab-actions { display: flex; }
+    .vtab-btn {
+      border: none; background: transparent; color: inherit; opacity: 0.65;
+      cursor: pointer; font-size: 12px; width: 20px; height: 20px; border-radius: 5px;
+      display: grid; place-items: center;
+    }
+    .vtab-btn:hover { opacity: 1; background: rgba(255, 255, 255, 0.1); }
+    .vtab-btn.close:hover { color: #f87171; }
+
+    .sb-add {
+      height: 34px; border-radius: 9px; border: 1px solid rgba(148, 163, 184, 0.18);
+      background: rgba(255, 255, 255, 0.04); color: #e2e8f0; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 15px;
+    }
+    .sb-add:hover { background: rgba(56, 189, 248, 0.16); border-color: rgba(56, 189, 248, 0.35); color: #fff; }
+    .sb-add .lbl { display: none; font-size: 12px; }
+    .sidebar.expanded .sb-add .lbl { display: inline; }
+
+    /* Draggable Split Divider */
+    .split-divider {
+      display: none; position: fixed; top: 44px; bottom: 0; width: 6px;
+      background: #1e293b; cursor: col-resize; z-index: 18;
+      border-left: 1px solid rgba(56, 189, 248, 0.25);
+      border-right: 1px solid rgba(167, 139, 250, 0.25);
+    }
+    .split-divider:hover, .split-divider.dragging { background: #38bdf8; }
+    .split-divider.visible { display: block; }
   </style>
 </head>
 <body>
   <div class="bar">
     <div class="nav">
+      <button id="toggle-sb" class="btn" title="Toggle Vertical Tab Sidebar (Ctrl+B)">&#9776;</button>
       <button id="back" class="btn" title="Back">&#8592;</button>
       <button id="fwd" class="btn" title="Forward">&#8594;</button>
       <button id="reload" class="btn" title="Reload">&#8635;</button>
     </div>
-    <div id="tabs" class="tabs"></div>
-    <button id="add" class="btn" title="New Tab">+</button>
     <form id="omni-form" class="omni">
-      <input id="omni" type="text" placeholder="Search or enter address (Sectium Chromium 158+)" spellcheck="false" />
+      <input id="omni" type="text" placeholder="Search or enter address (Sectium Chromium 160+)" spellcheck="false" />
     </form>
+    <button id="pane-pill" class="pane-pill" title="Click to switch active split pane">Split: Left</button>
+    <button id="split-btn" class="btn" title="Toggle Split Tabs Side-by-Side (Ctrl+\)">&#9703;</button>
     <span id="badge" class="badge">Sectium v0.7</span>
     <button id="devtools" class="btn" title="Toggle DevTools">&lt;/&gt;</button>
   </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sb-top">
+      <button id="groups-btn" class="sb-action" title="Tabgruppen (Create / Manage Tab Groups)">
+        <span>&#9638;</span><span class="lbl">Tabgruppen</span>
+      </button>
+      <div id="group-create" class="sb-group-create">
+        <input id="group-name-input" type="text" placeholder="New group name..." />
+        <button id="group-create-submit" type="button">+</button>
+      </div>
+      <button id="search-btn" class="sb-action" title="Tab-Suche (Ctrl+Shift+A)">
+        <span>&#128269;</span><span class="lbl">Tab-Suche</span>
+      </button>
+      <div id="search-wrap" class="sb-search-wrap">
+        <input id="search-input" class="sb-search-input" type="text" placeholder="Filter tabs..." spellcheck="false" />
+      </div>
+    </div>
+    <div class="sb-divider"></div>
+    <div id="sb-tabs" class="sb-tabs"></div>
+    <button id="add" class="sb-add" title="New Tab (Ctrl+T)">
+      <span>+</span><span class="lbl">New Tab</span>
+    </button>
+  </aside>
+
+  <div id="split-divider" class="split-divider" title="Drag to resize split panes"></div>
+
   <script>
-    const tabsEl = document.getElementById('tabs');
+    const sidebarEl = document.getElementById('sidebar');
+    const sbTabsEl = document.getElementById('sb-tabs');
     const omni = document.getElementById('omni');
     const backBtn = document.getElementById('back');
     const fwdBtn = document.getElementById('fwd');
     const badge = document.getElementById('badge');
+    const splitBtn = document.getElementById('split-btn');
+    const panePill = document.getElementById('pane-pill');
+    const splitDivider = document.getElementById('split-divider');
+    const searchBtn = document.getElementById('search-btn');
+    const searchWrap = document.getElementById('search-wrap');
+    const searchInput = document.getElementById('search-input');
+    const groupsBtn = document.getElementById('groups-btn');
+    const groupCreate = document.getElementById('group-create');
+    const groupNameInput = document.getElementById('group-name-input');
 
+    let latestState = { tabs: [], groups: [], sidebarExpanded: false, splitTabId: null, focusedPane: 'primary', layout: null };
+    let searchOpen = false;
+    let groupCreateOpen = false;
+
+    document.getElementById('toggle-sb').onclick = () => window.sectiumChrome.toggleSidebar();
     document.getElementById('back').onclick = () => window.sectiumChrome.back();
     document.getElementById('fwd').onclick = () => window.sectiumChrome.forward();
     document.getElementById('reload').onclick = () => window.sectiumChrome.reload();
     document.getElementById('add').onclick = () => window.sectiumChrome.newTab();
     document.getElementById('devtools').onclick = () => window.sectiumChrome.toggleDevTools();
+    splitBtn.onclick = () => window.sectiumChrome.toggleSplit();
+    panePill.onclick = () => {
+      window.sectiumChrome.focusSplitPane(latestState.focusedPane === 'secondary' ? 'primary' : 'secondary');
+    };
     document.getElementById('omni-form').onsubmit = (e) => {
       e.preventDefault();
       window.sectiumChrome.navigate(omni.value);
       omni.blur();
     };
 
-    window.sectiumChrome.onTabs(({ tabs, versions }) => {
-      if (versions && versions.chromium) {
-        badge.textContent = 'Cr ' + versions.chromium.split('.')[0] + ' · V8 ' + versions.v8.split('.').slice(0,2).join('.');
+    searchBtn.onclick = () => {
+      searchOpen = !searchOpen;
+      if (searchOpen && !latestState.sidebarExpanded) {
+        window.sectiumChrome.toggleSidebar(true);
       }
-      tabsEl.innerHTML = '';
-      for (const t of tabs) {
-        const div = document.createElement('div');
-        div.className = 'tab' + (t.active ? ' active' : '');
-        div.onclick = () => window.sectiumChrome.activateTab(t.id);
-        const span = document.createElement('span');
-        span.className = 'tab-title';
-        span.textContent = t.loading ? '… ' + t.title : t.title;
-        const x = document.createElement('button');
-        x.className = 'tab-x';
-        x.textContent = '×';
-        x.onclick = (e) => { e.stopPropagation(); window.sectiumChrome.closeTab(t.id); };
-        div.append(span, x);
-        tabsEl.append(div);
-        if (t.active) {
-          if (document.activeElement !== omni) omni.value = t.url || '';
-          backBtn.disabled = !t.canGoBack;
-          fwdBtn.disabled = !t.canGoForward;
+      searchWrap.classList.toggle('open', searchOpen);
+      searchBtn.classList.toggle('active', searchOpen);
+      if (searchOpen) {
+        setTimeout(() => searchInput.focus(), 30);
+      } else {
+        searchInput.value = '';
+        renderState(latestState);
+      }
+    };
+
+    searchInput.oninput = () => renderState(latestState);
+    searchInput.onkeydown = (e) => {
+      if (e.key === 'Escape') {
+        searchOpen = false;
+        searchInput.value = '';
+        searchWrap.classList.remove('open');
+        searchBtn.classList.remove('active');
+        renderState(latestState);
+      } else if (e.key === 'Enter') {
+        const first = sbTabsEl.querySelector('.vtab');
+        if (first && first.dataset.tabId) {
+          window.sectiumChrome.activateTab(Number(first.dataset.tabId));
         }
       }
+    };
+
+    groupsBtn.onclick = () => {
+      groupCreateOpen = !groupCreateOpen;
+      if (groupCreateOpen && !latestState.sidebarExpanded) {
+        window.sectiumChrome.toggleSidebar(true);
+      }
+      groupCreate.classList.toggle('open', groupCreateOpen);
+      groupsBtn.classList.toggle('active', groupCreateOpen);
+      if (groupCreateOpen) setTimeout(() => groupNameInput.focus(), 30);
+    };
+
+    function submitNewGroup() {
+      const name = groupNameInput.value.trim();
+      window.sectiumChrome.createGroup(name || undefined);
+      groupNameInput.value = '';
+      groupCreateOpen = false;
+      groupCreate.classList.remove('open');
+      groupsBtn.classList.remove('active');
+    }
+    document.getElementById('group-create-submit').onclick = submitNewGroup;
+    groupNameInput.onkeydown = (e) => {
+      if (e.key === 'Enter') submitNewGroup();
+      if (e.key === 'Escape') {
+        groupCreateOpen = false;
+        groupCreate.classList.remove('open');
+        groupsBtn.classList.remove('active');
+      }
+    };
+
+    // Keyboard shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && !e.shiftKey && e.key.toLowerCase() === 'b') {
+        e.preventDefault();
+        window.sectiumChrome.toggleSidebar();
+      } else if (e.ctrlKey && e.key === '\\') {
+        e.preventDefault();
+        window.sectiumChrome.toggleSplit();
+      } else if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
+        e.preventDefault();
+        searchBtn.click();
+      }
     });
+
+    // Draggable Split Divider
+    let draggingSplit = false;
+    splitDivider.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      draggingSplit = true;
+      splitDivider.classList.add('dragging');
+    });
+    window.addEventListener('mousemove', (e) => {
+      if (!draggingSplit || !latestState.layout) return;
+      const sbW = latestState.layout.sidebarWidth;
+      const availW = Math.max(1, window.innerWidth - sbW);
+      const ratio = (e.clientX - sbW) / availW;
+      window.sectiumChrome.setSplitRatio(ratio);
+    });
+    window.addEventListener('mouseup', () => {
+      if (!draggingSplit) return;
+      draggingSplit = false;
+      splitDivider.classList.remove('dragging');
+    });
+
+    function makeTabRow(t, groups) {
+      const row = document.createElement('div');
+      row.dataset.tabId = String(t.id);
+      row.className = 'vtab' + (t.active ? ' active' : '') + (t.splitSecondary ? ' split-secondary' : '');
+      row.title = t.title + (t.url ? '\n' + t.url : '');
+      row.onclick = () => window.sectiumChrome.activateTab(t.id);
+
+      const ico = document.createElement('div');
+      ico.className = 'vtab-ico';
+      if (t.favicon) {
+        const img = document.createElement('img');
+        img.src = t.favicon;
+        img.onerror = () => { ico.textContent = (t.title || 'S').slice(0, 1).toUpperCase(); };
+        ico.append(img);
+      } else {
+        ico.textContent = (t.title || 'S').slice(0, 1).toUpperCase();
+      }
+
+      const title = document.createElement('span');
+      title.className = 'vtab-title';
+      title.textContent = (t.loading ? '… ' : '') + t.title;
+
+      const splitTag = document.createElement('span');
+      splitTag.className = 'vtab-split-tag';
+      splitTag.textContent = 'R';
+
+      const actions = document.createElement('div');
+      actions.className = 'vtab-actions';
+
+      // Quick split-with-this-tab button
+      const sp = document.createElement('button');
+      sp.className = 'vtab-btn';
+      sp.title = t.splitSecondary ? 'Unsplit' : 'Open side-by-side in Split View';
+      sp.textContent = '◫';
+      sp.onclick = (e) => { e.stopPropagation(); window.sectiumChrome.toggleSplit(t.id); };
+
+      // Cycle tab group assignment
+      if (groups.length > 0) {
+        const gp = document.createElement('button');
+        gp.className = 'vtab-btn';
+        gp.title = 'Assign / cycle Tab Group';
+        gp.textContent = '⊞';
+        gp.onclick = (e) => {
+          e.stopPropagation();
+          const idx = groups.findIndex((g) => g.id === t.groupId);
+          const next = idx === -1 ? groups[0].id : (idx + 1 < groups.length ? groups[idx + 1].id : null);
+          window.sectiumChrome.assignTabGroup(t.id, next);
+        };
+        actions.append(gp);
+      }
+
+      const close = document.createElement('button');
+      close.className = 'vtab-btn close';
+      close.title = 'Close Tab';
+      close.textContent = '×';
+      close.onclick = (e) => { e.stopPropagation(); window.sectiumChrome.closeTab(t.id); };
+
+      actions.append(sp, close);
+      row.append(ico, title, splitTag, actions);
+      return row;
+    }
+
+    function renderState(state) {
+      latestState = state;
+      const { tabs, groups = [], versions, sidebarExpanded, splitTabId, focusedPane, layout } = state;
+
+      sidebarEl.classList.toggle('expanded', Boolean(sidebarExpanded));
+      splitBtn.classList.toggle('active', splitTabId != null);
+
+      const isSplit = splitTabId != null && layout && layout.divider;
+      splitDivider.classList.toggle('visible', Boolean(isSplit));
+      panePill.classList.toggle('visible', Boolean(isSplit));
+      if (isSplit) {
+        splitDivider.style.left = layout.divider.x + 'px';
+        panePill.textContent = focusedPane === 'secondary' ? 'Split: Right' : 'Split: Left';
+      }
+
+      if (versions && versions.chromium) {
+        badge.textContent = 'Cr ' + versions.chromium.split('.')[0] + ' · V8 ' + versions.v8.split('.').slice(0, 2).join('.');
+      }
+
+      const q = searchInput.value.trim().toLowerCase();
+      const groupNameById = new Map(groups.map((g) => [g.id, String(g.title || '').toLowerCase()]));
+      const visibleTabs = q
+        ? tabs.filter((t) =>
+            String(t.title || '').toLowerCase().includes(q) ||
+            String(t.url || '').toLowerCase().includes(q) ||
+            (t.groupId != null && (groupNameById.get(t.groupId) || '').includes(q))
+          )
+        : tabs;
+
+      sbTabsEl.innerHTML = '';
+
+      // Render grouped tabs first
+      for (const g of groups) {
+        const gTabs = visibleTabs.filter((t) => t.groupId === g.id);
+        if (q && gTabs.length === 0) continue;
+
+        const block = document.createElement('div');
+        block.className = 'group-block';
+
+        const header = document.createElement('div');
+        header.className = 'group-header';
+        header.title = g.title + ' (' + gTabs.length + ')';
+        header.onclick = () => window.sectiumChrome.toggleGroupCollapse(g.id);
+
+        const dot = document.createElement('span');
+        dot.className = 'group-dot';
+        dot.style.background = g.color;
+
+        const gTitle = document.createElement('span');
+        gTitle.className = 'group-title';
+        gTitle.textContent = (g.collapsed ? '▸ ' : '▾ ') + g.title;
+
+        const gCount = document.createElement('span');
+        gCount.className = 'group-count';
+        gCount.textContent = String(gTabs.length);
+
+        const addInGroup = document.createElement('button');
+        addInGroup.className = 'group-mini-btn';
+        addInGroup.title = 'New Tab in Group';
+        addInGroup.textContent = '+';
+        addInGroup.onclick = (e) => { e.stopPropagation(); window.sectiumChrome.newTab('', g.id); };
+
+        const delGroup = document.createElement('button');
+        delGroup.className = 'group-mini-btn';
+        delGroup.title = 'Ungroup';
+        delGroup.textContent = '×';
+        delGroup.onclick = (e) => { e.stopPropagation(); window.sectiumChrome.deleteGroup(g.id); };
+
+        header.append(dot, gTitle, gCount, addInGroup, delGroup);
+        block.append(header);
+
+        if (!g.collapsed || q) {
+          const items = document.createElement('div');
+          items.className = 'group-items';
+          items.style.borderLeftColor = g.color;
+          for (const t of gTabs) items.append(makeTabRow(t, groups));
+          block.append(items);
+        }
+        sbTabsEl.append(block);
+      }
+
+      // Render ungrouped tabs
+      for (const t of visibleTabs.filter((x) => x.groupId == null)) {
+        sbTabsEl.append(makeTabRow(t, groups));
+      }
+
+      const focusedTab = tabs.find((t) => t.focused) || tabs.find((t) => t.active);
+      if (focusedTab) {
+        if (document.activeElement !== omni) omni.value = focusedTab.url || '';
+        backBtn.disabled = !focusedTab.canGoBack;
+        fwdBtn.disabled = !focusedTab.canGoForward;
+      }
+    }
+
+    window.sectiumChrome.onTabs(renderState);
   </script>
 </body>
 </html>
