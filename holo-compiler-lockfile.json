@@ -1,0 +1,123 @@
+{
+  "schema": "holo-compiler-lockfile-v1",
+  "abiMagic": "0x33564742",
+  "casLayout": "v11",
+  "repo": "awesome-os/sectium-browser",
+  "targets": [
+    "linux-arm64",
+    "linux-x64",
+    "macos-arm64",
+    "win64"
+  ],
+  "generatedAt": "2026-11-24T23:53:02.473Z",
+  "dependencies": [
+    {
+      "id": "awesome-os/sectium-browser/install.ps1",
+      "kind": "object",
+      "version": "v0.7.2",
+      "target": "win64",
+      "sha512": "39fc0dab9a85980de2bb02a654c30634f0271cce4154557e1af8f8a1b227ebf525ce3e5218ca0e2d7db02f29434e3b5a26470e646d2594d3a3c1057361a92e84",
+      "size": 2361,
+      "executable": false,
+      "blob": "v11/files/39/39fc0dab9a85980de2bb02a654c30634f0271cce4154557e1af8f8a1b227ebf525ce3e5218ca0e2d7db02f29434e3b5a26470e646d2594d3a3c1057361a92e84",
+      "url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.7.2/install.ps1",
+      "dependencies": []
+    },
+    {
+      "id": "awesome-os/sectium-browser/install.sh",
+      "kind": "object",
+      "version": "v0.7.2",
+      "target": "any",
+      "sha512": "e07be7d2aedf3209990a86752ebc2acfb977007efc160a9804da01ce19948ee68ac4914b08b2151df96afedde3a31adfe97dd77c99b80391a8c251964dfaa0fc",
+      "size": 2081,
+      "executable": true,
+      "blob": "v11/files/e0/e07be7d2aedf3209990a86752ebc2acfb977007efc160a9804da01ce19948ee68ac4914b08b2151df96afedde3a31adfe97dd77c99b80391a8c251964dfaa0fc-exec",
+      "url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.7.2/install.sh",
+      "dependencies": []
+    },
+    {
+      "id": "awesome-os/sectium-browser/sectium-browser-app.tar.zst",
+      "kind": "object",
+      "version": "v0.7.2",
+      "target": "any",
+      "sha512": "f817a89cef92d4ac7b54ce52889e9b332ffa053e4e12f4e01bf5761dc8aba4b628997ee9d66c6bfa8b97a097c0dce2e708e97af4eaf8fada5b0baac323796565",
+      "size": 16870,
+      "executable": false,
+      "blob": "v11/files/f8/f817a89cef92d4ac7b54ce52889e9b332ffa053e4e12f4e01bf5761dc8aba4b628997ee9d66c6bfa8b97a097c0dce2e708e97af4eaf8fada5b0baac323796565",
+      "url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.7.2/sectium-browser-app.tar.zst",
+      "dependencies": []
+    },
+    {
+      "id": "awesome-os/sectium-browser/sectium-browser-linux-arm64",
+      "kind": "bin",
+      "version": "v0.7.2",
+      "target": "linux-arm64",
+      "sha512": "962bd60b736759afaa84eda922c77668c3a4cc636a6e331edb775f9bb2f91742cb0908ef306d7f59e154bc813f626c4f851a2a990b7d73d07dac32b361cf4026",
+      "size": 1222624,
+      "executable": true,
+      "blob": "v11/files/96/962bd60b736759afaa84eda922c77668c3a4cc636a6e331edb775f9bb2f91742cb0908ef306d7f59e154bc813f626c4f851a2a990b7d73d07dac32b361cf4026-exec",
+      "url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.7.2/sectium-browser-linux-arm64",
+      "dependencies": []
+    },
+    {
+      "id": "awesome-os/sectium-browser/sectium-browser-linux-x64",
+      "kind": "bin",
+      "version": "v0.7.2",
+      "target": "linux-x64",
+      "sha512": "98ee98b815c82b5372c14a197c8a32d282797fff45ea5da697bd4a2faebd3d6be26c257ea492edc625a9a4ecfee5a8b2fea2dd0c424398587596faa3adc9f0bc",
+      "size": 1155968,
+      "executable": true,
+      "blob": "v11/files/98/98ee98b815c82b5372c14a197c8a32d282797fff45ea5da697bd4a2faebd3d6be26c257ea492edc625a9a4ecfee5a8b2fea2dd0c424398587596faa3adc9f0bc-exec",
+      "url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.7.2/sectium-browser-linux-x64",
+      "dependencies": []
+    },
+    {
+      "id": "awesome-os/sectium-browser/sectium-browser-macos-arm64",
+      "kind": "ghost-launcher",
+      "version": "v0.7.2",
+      "target": "macos-arm64",
+      "sha512": "7052bc4a1621692aab44e258de78a504df2325ddabf5c08832b1a30aac40a9c4b336557e6f1870fa268fd3969d4738a6c279f26b43c060a44a3c2677075b380e",
+      "size": 52520,
+      "executable": true,
+      "blob": "v11/files/70/7052bc4a1621692aab44e258de78a504df2325ddabf5c08832b1a30aac40a9c4b336557e6f1870fa268fd3969d4738a6c279f26b43c060a44a3c2677075b380e-exec",
+      "url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.7.2/sectium-browser-macos-arm64",
+      "dependencies": []
+    },
+    {
+      "id": "awesome-os/sectium-browser/sectium-browser.exe",
+      "kind": "ghost-launcher",
+      "version": "v0.7.2",
+      "target": "win64",
+      "sha512": "bbc6a143a276cf6e56bb5a35f17a0c02be45f51e6b84e46a5bf6b62cd0a7ecedf17c0a78246072c22191811d79fe7bca20d243cebf5239d002411d81b9cce7d8",
+      "size": 185856,
+      "executable": true,
+      "blob": "v11/files/bb/bbc6a143a276cf6e56bb5a35f17a0c02be45f51e6b84e46a5bf6b62cd0a7ecedf17c0a78246072c22191811d79fe7bca20d243cebf5239d002411d81b9cce7d8-exec",
+      "url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.7.2/sectium-browser.exe",
+      "dependencies": []
+    },
+    {
+      "id": "awesome-os/sectium-browser/sectium-browser.pdb",
+      "kind": "object",
+      "version": "v0.7.2",
+      "target": "win64",
+      "sha512": "6b5b669640f0f2b58b442dd1d5b42f6243143a2b562f7ad8f77b0ee11fd7cff50f60f4e7bc132c57415d634087f70ca20c4e11f98521e1b800e2d71a7afbc552",
+      "size": 1183744,
+      "executable": false,
+      "blob": "v11/files/6b/6b5b669640f0f2b58b442dd1d5b42f6243143a2b562f7ad8f77b0ee11fd7cff50f60f4e7bc132c57415d634087f70ca20c4e11f98521e1b800e2d71a7afbc552",
+      "url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.7.2/sectium-browser.pdb",
+      "dependencies": []
+    },
+    {
+      "id": "awesome-os/sectium-browser/SHA256SUMS.txt",
+      "kind": "object",
+      "version": "v0.7.2",
+      "target": "any",
+      "sha512": "e10825bde6014776d5100e51aaa5ea2c8a35b74c1f9831578dbd8796f4fe19675d674702d1dcc22aea9e41c0ad5827fc7f3c2c180ba2e020e0c5daf9cf839166",
+      "size": 615,
+      "executable": false,
+      "blob": "v11/files/e1/e10825bde6014776d5100e51aaa5ea2c8a35b74c1f9831578dbd8796f4fe19675d674702d1dcc22aea9e41c0ad5827fc7f3c2c180ba2e020e0c5daf9cf839166",
+      "url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.7.2/SHA256SUMS.txt",
+      "dependencies": []
+    }
+  ]
+}
