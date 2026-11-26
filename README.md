@@ -1,6 +1,6 @@
 # Sectium Browser
 
-> **A fast, sovereign BSD-3 desktop browser (`~110 MB` RAM live) with AtlasKV local search, Chrome-nudge-free Google web search (zero DuckDuckGo), pure-art Sectium Canvas New Tab, and zero-duplication `b8g-ghost @ cas-v1` hydration.**
+> **The Sovereign BSD-3 Browser & Compositor Shell of AwesomeOS (`~110 MB` RAM live) — featuring `< 5 ms` AtlasKV local search, Chrome-nudge-free web search, built-in Sectium IDE DevTools, and zero-duplication `Holo v11` CAS (`SHA-512 + Ed25519`) hydration.**
 
 ---
 
@@ -10,22 +10,22 @@
 ```powershell
 irm https://github.com/awesome-os/sectium-browser/releases/latest/download/install.ps1 | iex
 ```
-Installs `sectium-browser.exe` into `%LOCALAPPDATA%\AwesomeOS\SectiumBrowser`, verifies `SHA256SUMS.txt`, and creates a Start Menu shortcut.
+Installs `sectium-browser.exe` into `%LOCALAPPDATA%\AwesomeOS\SectiumBrowser`, verifies checksums, and creates a Start Menu shortcut.
 
 ### Linux (x64 / ARM64) & macOS (Apple Silicon)
 ```sh
 curl -fsSL https://github.com/awesome-os/sectium-browser/releases/latest/download/install.sh | sh
 ```
-Installs `sectium-browser` into `~/.local/bin/sectium-browser`, verifies `SHA256SUMS.txt`, and creates a `.desktop` entry on Linux.
+Installs `sectium-browser` into `~/.local/bin/sectium-browser`, verifies checksums, and creates a `.desktop` entry on Linux.
 
 ---
 
-## Key Features
-- **AtlasKV Sovereign Search + Nudge-Free Google Web Search:** Instant `< 5 ms` local KG2KV vector search over your browsing history, Awesome-OS ecosystem, and `b8g-ghost @ cas-v1` index, with 3-layer Chrome-nudge-free Google Search fallback (clean Chrome UA, callout network block, CSS promo hide — zero DuckDuckGo).
-- **Zero Duplication (`~118 KB` Native Launcher):** Shares ONE `b8g-ghost` CAS runtime (`B8G_GHOST_CACHE_DIR` / `~/.b8g/cas`) with `awesome-os/code-oss` and `awesome-os/theia`.
-- **Zero Ad-Bidding Models & Zero Telemetry:** `build_with_tflite_lib = false` across all static release targets and `--disable-component-update` + `OptimizationGuideModelDownloading,BrowsingTopics` disabled by default.
-- **Vertical Tab Groups & Horizontal Split View:** Lay out two or more tabs side-by-side with draggable dividers (`shell/virtual-frame-shell.mts`) and automatic idle-tab freezing.
-- **Hardened Sandboxing & Installer Integrity:** Strict OS-native sandboxing (AppContainer / Seatbelt / Landlock+seccomp), `<= 250` char shortcut gate, and SHA-256 tamper verification.
+## Key Features (The Browser-as-Shell Pillar of AwesomeOS)
+- **ChromeOS-Model Shell Integration:** Acts as the native display compositor and app runtime of [`awesome-os/awesome-os`](https://github.com/awesome-os/awesome-os) (`0` closed Google/Microsoft telemetry or Widevine DLLs).
+- **AtlasKV Sovereign Omnibox + Nudge-Free Search:** Instant `< 5 ms` local KG2KV search across browsing history, workspaces, and the `Holo v11` index.
+- **Zero Duplication (`~118 KB` Native Launcher):** Shares ONE immutable `v11` CAS store (`B8G_CAS_DIR` / `~/.b8g/cas`) via 0-byte hardlinks with `code-oss` and `holo-compiler`.
+- **Sectium IDE MV3 Extension (`extensions/sectium-ide-devtools/`):** Built-in `HoloCompiler.*`, `HoloDebug.*`, and `HoloVerify.*` DevTools feedback loop with automatic secret redaction.
+- **Hardened OS Sandboxing:** AppContainer (`S-1-15-2-1`) on Windows, Seatbelt on macOS, and Landlock + `seccomp` on Holo-Linux `7.3.6`.
 
 ## Quick Verification
 ```bash
@@ -34,13 +34,3 @@ node --test app/search/atlaskv-search.test.mts installer/release-profile.test.mt
 
 ## License
 BSD-3-Clause
-
-## Quick Install & Run (Windows / Linux / macOS)
-
-```sh
-# Install / hydrate from v11 CAS via holo-pm
-holo-pm install repository://github.com/awesome-os/sectium-browser@main
-
-# Or project & run directly via holo-project (0-byte hardlink)
-holo-project "project://cpp/sectium-browser?from=repository://github.com/awesome-os/sectium-browser@main"
-```
