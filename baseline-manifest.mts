@@ -62,10 +62,11 @@ export interface RollingReleaseManifest {
     runtime_binary: string;
     ghost_registry: {
       schema: 'b8g-ghost-registry-v1';
-      cas_layout: '<cas>/<sha256>/<filename>';
-      ghost_release_repo: 'awesome-os/b8g-ghost';
+      cas_layout: 'v11/files/<sha512[:2]>/<sha512>';
+      ghost_release_repo: 'awesome-os/holo-v11';
       shards_manifest: 'ghost-shards-manifest.json';
       unified_index: 'ghost-index.json';
+      max_version_lock: string;
     };
   };
 }
@@ -181,10 +182,11 @@ export function buildRollingReleaseManifest(opts: {
       runtime_binary: 'bun-neon-v8.exe',
       ghost_registry: {
         schema: 'b8g-ghost-registry-v1',
-        cas_layout: '<cas>/<sha256>/<filename>',
-        ghost_release_repo: 'awesome-os/b8g-ghost',
+        cas_layout: 'v11/files/<sha512[:2]>/<sha512>',
+        ghost_release_repo: 'awesome-os/holo-v11',
         shards_manifest: 'ghost-shards-manifest.json',
         unified_index: 'ghost-index.json',
+        max_version_lock: 'https://github.com/awesome-os/t2linux-baseline/blob/main/catalog/max-version-lock.json',
       },
     },
   };
