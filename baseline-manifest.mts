@@ -45,7 +45,16 @@ export interface RollingReleaseManifest {
   };
   chromium_baseline: {
     milestone: string;
+    channel: 'Canary';
+    branch_position: number;
     v8_version: string;
+    canary_hashes: {
+      chromium: string;
+      v8: string;
+      skia: string;
+      dawn: string;
+      angle: string;
+    };
     is_component_build: boolean;
     build_with_tflite_lib: boolean;
   };
@@ -164,8 +173,17 @@ export function buildRollingReleaseManifest(opts: {
       overlay_file: 'chromium-brand-overlay.json',
     },
     chromium_baseline: {
-      milestone: '146.x',
-      v8_version: '16.0.88',
+      milestone: '160.0.8184.0',
+      channel: 'Canary',
+      branch_position: 1754429,
+      v8_version: '16.0.88+ (0239d7c3d8e3)',
+      canary_hashes: {
+        chromium: '2ff9074e1ccf3cf8557b3ebe4158cea0e832b175',
+        v8: '0239d7c3d8e3c16f136fc238f4ff028dfa42f0eb',
+        skia: 'e84ecd98d9f2273b6cc9a0c0c962fdcceda733b7',
+        dawn: '5c82d7ed2d7bd0070be3e1703055d49a5a05a949',
+        angle: 'a35430f259e8e277253c99cfcb5a0bf9226cdfe5',
+      },
       is_component_build: true,
       build_with_tflite_lib: false,
     },
