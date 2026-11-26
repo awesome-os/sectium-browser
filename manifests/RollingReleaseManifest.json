@@ -2,7 +2,7 @@
   "schema": "sectium-baseline-v1",
   "baseline_tag": "v0.6.1-baseline",
   "previous_tag": "v0.6.0-baseline",
-  "generated_at": "2026-11-26T08:12:26.803Z",
+  "generated_at": "2026-11-26T08:13:13.376Z",
   "brand": {
     "product_name": "Sectium Browser",
     "mascot": "Lumi White Dragon",
@@ -12,8 +12,17 @@
     "overlay_file": "chromium-brand-overlay.json"
   },
   "chromium_baseline": {
-    "milestone": "146.x",
-    "v8_version": "16.0.88",
+    "milestone": "160.0.8184.0",
+    "channel": "Canary",
+    "branch_position": 1754429,
+    "v8_version": "16.0.88+ (0239d7c3d8e3)",
+    "canary_hashes": {
+      "chromium": "2ff9074e1ccf3cf8557b3ebe4158cea0e832b175",
+      "v8": "0239d7c3d8e3c16f136fc238f4ff028dfa42f0eb",
+      "skia": "e84ecd98d9f2273b6cc9a0c0c962fdcceda733b7",
+      "dawn": "5c82d7ed2d7bd0070be3e1703055d49a5a05a949",
+      "angle": "a35430f259e8e277253c99cfcb5a0bf9226cdfe5"
+    },
     "is_component_build": true,
     "build_with_tflite_lib": false
   },
@@ -298,8 +307,8 @@
       "role": "brand",
       "source_repo": "awesome-os/sectium-browser",
       "source_tag": "v0.6.1-baseline",
-      "bytes": 168427,
-      "sha256": "dc188b5b369eeb6057439fd28db5e8a26263c8ee79487d05aa40cfd793362c3e",
+      "bytes": 168428,
+      "sha256": "395358938ad5e4554337779183bf3e2d8e4d1ec8ddabd6176bb68b638003827b",
       "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/lumi-white-dragon-brand-pack.tar.gz"
     },
     {

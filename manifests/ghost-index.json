@@ -1,7 +1,7 @@
 {
   "schema": "b8g-ghost-unified-index-v1",
   "baseline_tag": "v0.6.1-baseline",
-  "generated_at": "2026-11-26T08:12:26.803Z",
+  "generated_at": "2026-11-26T08:13:13.376Z",
   "cas_layout": "<cas>/<sha256>/<filename>",
   "total_entries": 67,
   "entries": {
@@ -479,8 +479,8 @@
     },
     "lumi-white-dragon-brand-pack.tar.gz": {
       "filename": "lumi-white-dragon-brand-pack.tar.gz",
-      "sha256": "dc188b5b369eeb6057439fd28db5e8a26263c8ee79487d05aa40cfd793362c3e",
-      "cas_key": "dc188b5b369eeb60",
+      "sha256": "395358938ad5e4554337779183bf3e2d8e4d1ec8ddabd6176bb68b638003827b",
+      "cas_key": "395358938ad5e455",
       "category": "baseline",
       "source_manifest": "RollingReleaseManifest.json",
       "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/lumi-white-dragon-brand-pack.tar.gz"
