@@ -1,0 +1,545 @@
+{
+  "schema": "b8g-ghost-unified-index-v1",
+  "baseline_tag": "v0.6.1-baseline",
+  "generated_at": "2026-11-26T07:48:37.151Z",
+  "cas_layout": "<cas>/<sha256>/<filename>",
+  "total_entries": 67,
+  "entries": {
+    "01-browser-split-shell.exe": {
+      "filename": "01-browser-split-shell.exe",
+      "sha256": "2d84eba0c002ba329d19e672889f22617595a1aad2a37eef0626f2145114ee95",
+      "cas_key": "2d84eba0c002ba32",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/01-browser-split-shell.exe"
+    },
+    "02-ide-workbench-shell.exe": {
+      "filename": "02-ide-workbench-shell.exe",
+      "sha256": "f60ed1b7be3cba5a4dba80c7c1d5f929bf7647c465eb608df88b1761215e6ce4",
+      "cas_key": "f60ed1b7be3cba5a",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/02-ide-workbench-shell.exe"
+    },
+    "03-tiling-wm-shell.exe": {
+      "filename": "03-tiling-wm-shell.exe",
+      "sha256": "6e80201488017863ca368b5c9f147f79e24a1306e09b8c512ea89b67dda8f7e7",
+      "cas_key": "6e80201488017863",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/03-tiling-wm-shell.exe"
+    },
+    "04-command-palette-launcher.exe": {
+      "filename": "04-command-palette-launcher.exe",
+      "sha256": "b4d68a13286a6bff61d839a3ff605aef6b764abb9dd2419bda2717dcc154df84",
+      "cas_key": "b4d68a13286a6bff",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/04-command-palette-launcher.exe"
+    },
+    "05-multi-agent-world-shell.exe": {
+      "filename": "05-multi-agent-world-shell.exe",
+      "sha256": "be1c308ce489e292e35c8026421d0baec7df49b5ed396a573ab07444ea2df6cb",
+      "cas_key": "be1c308ce489e292",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/05-multi-agent-world-shell.exe"
+    },
+    "06-node-graph-studio-shell.exe": {
+      "filename": "06-node-graph-studio-shell.exe",
+      "sha256": "7c08cb2abba194555856d70b749da54540ecfb17f3126c052edcb626eb30d427",
+      "cas_key": "7c08cb2abba19455",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/06-node-graph-studio-shell.exe"
+    },
+    "07-docking-dashboard-shell.exe": {
+      "filename": "07-docking-dashboard-shell.exe",
+      "sha256": "3b23007f6c541f7c316d195deec29cacb65fde3f3270b9876e3a5eede1f9eeef",
+      "cas_key": "3b23007f6c541f7c",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/07-docking-dashboard-shell.exe"
+    },
+    "08-tray-popover-widget-shell.exe": {
+      "filename": "08-tray-popover-widget-shell.exe",
+      "sha256": "4f2bc3776634801d031f99d1abf73d88292d96e15ee0794559ba7f8728476d37",
+      "cas_key": "4f2bc3776634801d",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/08-tray-popover-widget-shell.exe"
+    },
+    "args-linux-x64.gn": {
+      "filename": "args-linux-x64.gn",
+      "sha256": "dc42f7cb5425fbf89fdb80fb1dd1442386705446f3022230a7ca10ed9cd6a80d",
+      "cas_key": "dc42f7cb5425fbf8",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/args-linux-x64.gn"
+    },
+    "args-win64.gn": {
+      "filename": "args-win64.gn",
+      "sha256": "56ac6e2d621593811f7907f9d31ecb7c454852b4f3bdaba69a1fb71b18decbbf",
+      "cas_key": "56ac6e2d62159381",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/args-win64.gn"
+    },
+    "b8g-ghost-sdk.tar.gz": {
+      "filename": "b8g-ghost-sdk.tar.gz",
+      "sha256": "cfc0c2de22352f24104e9b8c104a771202ed780b6b84fae960aec51ecd83b633",
+      "cas_key": "cfc0c2de22352f24",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/b8g-ghost-sdk.tar.gz"
+    },
+    "b8g-shim-linux-arm64": {
+      "filename": "b8g-shim-linux-arm64",
+      "sha256": "646ad8a435189db06c7e24a1417117d730fb10a8ae16d016c80292d47fa510ad",
+      "cas_key": "646ad8a435189db0",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/b8g-shim-linux-arm64"
+    },
+    "b8g-shim-linux-x64": {
+      "filename": "b8g-shim-linux-x64",
+      "sha256": "d7d701ea8ebc16595b92eaa321332033ce17f4fe45d9453431dcfef3dee14544",
+      "cas_key": "d7d701ea8ebc1659",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/b8g-shim-linux-x64"
+    },
+    "b8g-shim-macos-arm64": {
+      "filename": "b8g-shim-macos-arm64",
+      "sha256": "aa2fc945ab2d1f80263edba55dd183419a2114826a99cadcc9d5209df06ec879",
+      "cas_key": "aa2fc945ab2d1f80",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/b8g-shim-macos-arm64"
+    },
+    "b8g-shim.exe": {
+      "filename": "b8g-shim.exe",
+      "sha256": "4e916c764be73cbaf50f04c518c74b05451efe91d1d9c6804207702b5f7b5748",
+      "cas_key": "4e916c764be73cba",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/b8g-shim.exe"
+    },
+    "bun-neon-v8.exe": {
+      "filename": "bun-neon-v8.exe",
+      "sha256": "0c90fea2ce8bae2a75303e4a77246ee5498dbbcb8f87ba12ccef8300fa01b195",
+      "cas_key": "0c90fea2ce8bae2a",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/bun-neon-v8.exe"
+    },
+    "chromium-brand-overlay.json": {
+      "filename": "chromium-brand-overlay.json",
+      "sha256": "628b3dd4f087d4b315ae79e2633a84fb95706dea069f74df06f5d8444520d223",
+      "cas_key": "628b3dd4f087d4b3",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/chromium-brand-overlay.json"
+    },
+    "ghost-5os-manifest.json": {
+      "filename": "ghost-5os-manifest.json",
+      "sha256": "6bf095c2b66ff3901a8dab60b95106b65bef8c3f06cb5fbb6d1fcc6421dbb6c4",
+      "cas_key": "6bf095c2b66ff390",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/ghost-5os-manifest.json"
+    },
+    "ghost-llvm-23.1.6-full-linux-x64.tar.zst": {
+      "filename": "ghost-llvm-23.1.6-full-linux-x64.tar.zst",
+      "sha256": "da1ba538c9e52ea410771c06ef0214ad393cba67f3b59ea4fc16855c3c07855c",
+      "cas_key": "da1ba538c9e52ea4",
+      "category": "toolchain",
+      "source_manifest": "ghost-toolchains-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.1.0-ghost-toolchains/ghost-llvm-23.1.6-full-linux-x64.tar.zst"
+    },
+    "ghost-llvm-23.1.6-full-win64.tar.zst": {
+      "filename": "ghost-llvm-23.1.6-full-win64.tar.zst",
+      "sha256": "5d3b023b7e6b75c1db45ae295855e80103b22f09a819001940af578bd65183b5",
+      "cas_key": "5d3b023b7e6b75c1",
+      "category": "toolchain",
+      "source_manifest": "ghost-toolchains-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.1.0-ghost-toolchains/ghost-llvm-23.1.6-full-win64.tar.zst"
+    },
+    "ghost-ninja-1.12.1-linux-x64.zip": {
+      "filename": "ghost-ninja-1.12.1-linux-x64.zip",
+      "sha256": "6f98805688d19672bd699fbbfa2c2cf0fc054ac3df1f0e6a47664d963d530255",
+      "cas_key": "6f98805688d19672",
+      "category": "toolchain",
+      "source_manifest": "ghost-toolchains-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.1.0-ghost-toolchains/ghost-ninja-1.12.1-linux-x64.zip"
+    },
+    "ghost-ninja-1.12.1-macos.zip": {
+      "filename": "ghost-ninja-1.12.1-macos.zip",
+      "sha256": "89a287444b5b3e98f88a945afa50ce937b8ffd1dcc59c555ad9b1baf855298c9",
+      "cas_key": "89a287444b5b3e98",
+      "category": "toolchain",
+      "source_manifest": "ghost-toolchains-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.1.0-ghost-toolchains/ghost-ninja-1.12.1-macos.zip"
+    },
+    "ghost-ninja-1.12.1-win64.zip": {
+      "filename": "ghost-ninja-1.12.1-win64.zip",
+      "sha256": "f550fec705b6d6ff58f2db3c374c2277a37691678d6aba463adcbb129108467a",
+      "cas_key": "f550fec705b6d6ff",
+      "category": "toolchain",
+      "source_manifest": "ghost-toolchains-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.1.0-ghost-toolchains/ghost-ninja-1.12.1-win64.zip"
+    },
+    "ghost-shards-manifest.json": {
+      "filename": "ghost-shards-manifest.json",
+      "sha256": "9ff98ea8a67467ffc2aae75968e616223a76f38dee7c4b52c16edbada6d9fce1",
+      "cas_key": "9ff98ea8a67467ff",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/ghost-shards-manifest.json"
+    },
+    "ghost-toolchains-manifest.json": {
+      "filename": "ghost-toolchains-manifest.json",
+      "sha256": "bf95c2532c83eac706523092be9d39ec8c218eb289995253ae9096faf895e012",
+      "cas_key": "bf95c2532c83eac7",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/ghost-toolchains-manifest.json"
+    },
+    "ghost-winsdk-msvc-x64.tar.zst": {
+      "filename": "ghost-winsdk-msvc-x64.tar.zst",
+      "sha256": "80960432afd58068bd2433bec2ddf658d722f018d6a7da8bd5846377180778db",
+      "cas_key": "80960432afd58068",
+      "category": "toolchain",
+      "source_manifest": "ghost-toolchains-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.1.0-ghost-toolchains/ghost-winsdk-msvc-x64.tar.zst"
+    },
+    "ghost-zig-0.14.0-linux-x64.tar.xz": {
+      "filename": "ghost-zig-0.14.0-linux-x64.tar.xz",
+      "sha256": "473ec26806133cf4d1918caf1a410f8403a13d979726a9045b421b685031a982",
+      "cas_key": "473ec26806133cf4",
+      "category": "toolchain",
+      "source_manifest": "ghost-toolchains-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.1.0-ghost-toolchains/ghost-zig-0.14.0-linux-x64.tar.xz"
+    },
+    "ghost-zig-0.14.0-macos-arm64.tar.xz": {
+      "filename": "ghost-zig-0.14.0-macos-arm64.tar.xz",
+      "sha256": "b71e4b7c4b4be9953657877f7f9e6f7ee89114c716da7c070f4a238220e95d7e",
+      "cas_key": "b71e4b7c4b4be995",
+      "category": "toolchain",
+      "source_manifest": "ghost-toolchains-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.1.0-ghost-toolchains/ghost-zig-0.14.0-macos-arm64.tar.xz"
+    },
+    "ghost-zig-0.14.0-win64.zip": {
+      "filename": "ghost-zig-0.14.0-win64.zip",
+      "sha256": "f53e5f9011ba20bbc3e0e6d0a9441b31eb227a97bac0e7d24172f1b8b27b4371",
+      "cas_key": "f53e5f9011ba20bb",
+      "category": "toolchain",
+      "source_manifest": "ghost-toolchains-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.1.0-ghost-toolchains/ghost-zig-0.14.0-win64.zip"
+    },
+    "ghost_sectium_display-linux-arm64.so": {
+      "filename": "ghost_sectium_display-linux-arm64.so",
+      "sha256": "c36c57c28141438cd2e6b8133c2b56c80185e487662cad899e1d1be073497c08",
+      "cas_key": "c36c57c28141438c",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/ghost_sectium_display-linux-arm64.so"
+    },
+    "ghost_sectium_display-linux-x64.so": {
+      "filename": "ghost_sectium_display-linux-x64.so",
+      "sha256": "ac6c61bf7f3fc019de41ac8e797b142c22329f24c9ffc0d29987cce2c9e11d7f",
+      "cas_key": "ac6c61bf7f3fc019",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/ghost_sectium_display-linux-x64.so"
+    },
+    "ghost_sectium_display-macos-arm64.dylib": {
+      "filename": "ghost_sectium_display-macos-arm64.dylib",
+      "sha256": "48b4c64e4e3c029dc543594e9347bfbd5dfd9f923682fd6462644fd7b2bce71c",
+      "cas_key": "48b4c64e4e3c029d",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/ghost_sectium_display-macos-arm64.dylib"
+    },
+    "ghost_sectium_display.dll": {
+      "filename": "ghost_sectium_display.dll",
+      "sha256": "fd49e165293174e774f3bb936213c3d7ffda9eaeb7514f8c2d22360ecac4b854",
+      "cas_key": "fd49e165293174e7",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/ghost_sectium_display.dll"
+    },
+    "libbrotli-linux-arm64.so": {
+      "filename": "libbrotli-linux-arm64.so",
+      "sha256": "c2294baf6aba547372e4ceda76c688fc74fcf7040641579cb8e55cec90a5d815",
+      "cas_key": "c2294baf6aba5473",
+      "category": "holo-5os",
+      "source_manifest": "ghost-5os-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libbrotli-linux-arm64.so"
+    },
+    "libbrotli-linux-x64.so": {
+      "filename": "libbrotli-linux-x64.so",
+      "sha256": "32f706660826092ea5a6af454660cdc7d096708e9cea3f224f1f67034ed6e750",
+      "cas_key": "32f706660826092e",
+      "category": "holo-5os",
+      "source_manifest": "ghost-5os-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libbrotli-linux-x64.so"
+    },
+    "libbrotli-macos-arm64.dylib": {
+      "filename": "libbrotli-macos-arm64.dylib",
+      "sha256": "470c1426e775197b4bc95b85751a82fd196d5e436dd9b550fe0509cd48b664b2",
+      "cas_key": "470c1426e775197b",
+      "category": "holo-5os",
+      "source_manifest": "ghost-5os-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libbrotli-macos-arm64.dylib"
+    },
+    "libbrotli-wasm32-wasi.wasm": {
+      "filename": "libbrotli-wasm32-wasi.wasm",
+      "sha256": "15f09b55143cf6c90e9b9af09f5465ff20b9597f08eae7fd8d1a50c5f0d29aa1",
+      "cas_key": "15f09b55143cf6c9",
+      "category": "holo-5os",
+      "source_manifest": "ghost-5os-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libbrotli-wasm32-wasi.wasm"
+    },
+    "libbrotli-win64.dll": {
+      "filename": "libbrotli-win64.dll",
+      "sha256": "9d6578ccaa0d97b540652a1f7b621bcbfcd5337b56e8a6c2cb1eba856c903238",
+      "cas_key": "9d6578ccaa0d97b5",
+      "category": "holo-5os",
+      "source_manifest": "ghost-5os-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libbrotli-win64.dll"
+    },
+    "libexpat-linux-arm64.so": {
+      "filename": "libexpat-linux-arm64.so",
+      "sha256": "e20241bf5d7a8c3a858ba8826edb3f958574e702dd0644c64aca1f7791cb8381",
+      "cas_key": "e20241bf5d7a8c3a",
+      "category": "holo-5os",
+      "source_manifest": "ghost-5os-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libexpat-linux-arm64.so"
+    },
+    "libexpat-linux-x64.so": {
+      "filename": "libexpat-linux-x64.so",
+      "sha256": "8a11758fd9ea9e851b7998a598566e367c847805f6dd163134ba602cb0b213ba",
+      "cas_key": "8a11758fd9ea9e85",
+      "category": "holo-5os",
+      "source_manifest": "ghost-5os-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libexpat-linux-x64.so"
+    },
+    "libexpat-macos-arm64.dylib": {
+      "filename": "libexpat-macos-arm64.dylib",
+      "sha256": "16cec3b4ae96526e3fb7d4e38124e0b1836df17c914707f1ce462b283eddddee",
+      "cas_key": "16cec3b4ae96526e",
+      "category": "holo-5os",
+      "source_manifest": "ghost-5os-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libexpat-macos-arm64.dylib"
+    },
+    "libexpat-wasm32-wasi.wasm": {
+      "filename": "libexpat-wasm32-wasi.wasm",
+      "sha256": "0047254a972e0fd4a6563b849bfb2b0fc489b1ab0406e9a198d6a6add5fa1e1e",
+      "cas_key": "0047254a972e0fd4",
+      "category": "holo-5os",
+      "source_manifest": "ghost-5os-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libexpat-wasm32-wasi.wasm"
+    },
+    "libexpat-win64.dll": {
+      "filename": "libexpat-win64.dll",
+      "sha256": "f553d8d1dcab427235c21955f33e4ad1b971211ab21de1377c48242026a3fb34",
+      "cas_key": "f553d8d1dcab4272",
+      "category": "holo-5os",
+      "source_manifest": "ghost-5os-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libexpat-win64.dll"
+    },
+    "libsectium_display-linux-arm64.so": {
+      "filename": "libsectium_display-linux-arm64.so",
+      "sha256": "c3c71874045b6a8babbcae78cc57b0f45b10a4b01d8f0f2dd7f5cc6a85d27f27",
+      "cas_key": "c3c71874045b6a8b",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/libsectium_display-linux-arm64.so"
+    },
+    "libsectium_display-linux-x64.so": {
+      "filename": "libsectium_display-linux-x64.so",
+      "sha256": "79b3427b1634cb6cb72a0481baae4b900d0d5b3ccbc82caffb286796eb2c32a3",
+      "cas_key": "79b3427b1634cb6c",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/libsectium_display-linux-x64.so"
+    },
+    "libsectium_display-macos-arm64.dylib": {
+      "filename": "libsectium_display-macos-arm64.dylib",
+      "sha256": "8ed596430b5b2c67477abe5e55901ef1a54773b7180165a00564dc25c0dcdb1a",
+      "cas_key": "8ed596430b5b2c67",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/libsectium_display-macos-arm64.dylib"
+    },
+    "libsectium_display.dll": {
+      "filename": "libsectium_display.dll",
+      "sha256": "50badeec9a1882ea6997b327f207bc91366561c5e3bff56572cfb1e7fc85b923",
+      "cas_key": "50badeec9a1882ea",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/libsectium_display.dll"
+    },
+    "libsectium_display.pdb": {
+      "filename": "libsectium_display.pdb",
+      "sha256": "a6265010de2f5715c4f2fe066a7a398a9c93db3d3eb3537e8726945cc9ad5232",
+      "cas_key": "a6265010de2f5715",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/libsectium_display.pdb"
+    },
+    "libsectium_display.wasm": {
+      "filename": "libsectium_display.wasm",
+      "sha256": "ae487c4671646a7b79b4365d222a2dda71177e3f668580a5f6c9d0476d5b6477",
+      "cas_key": "ae487c4671646a7b",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/libsectium_display.wasm"
+    },
+    "libsqlite3-linux-arm64.so": {
+      "filename": "libsqlite3-linux-arm64.so",
+      "sha256": "4c0742d16d85f6e296804c161dcac6d8ec9e60f6f73bff455a7d907068369263",
+      "cas_key": "4c0742d16d85f6e2",
+      "category": "holo-5os",
+      "source_manifest": "ghost-5os-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libsqlite3-linux-arm64.so"
+    },
+    "libsqlite3-linux-x64.so": {
+      "filename": "libsqlite3-linux-x64.so",
+      "sha256": "ca98fafd5b26079872c8e7aabeee1c4054add0322fac948c0d3801ece87d0d48",
+      "cas_key": "ca98fafd5b260798",
+      "category": "holo-5os",
+      "source_manifest": "ghost-5os-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libsqlite3-linux-x64.so"
+    },
+    "libsqlite3-macos-arm64.dylib": {
+      "filename": "libsqlite3-macos-arm64.dylib",
+      "sha256": "e727134d10432d7e9db80616c90a71920b13477c4bb27b631b17f8d14ab20f30",
+      "cas_key": "e727134d10432d7e",
+      "category": "holo-5os",
+      "source_manifest": "ghost-5os-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libsqlite3-macos-arm64.dylib"
+    },
+    "libsqlite3-wasm32-wasi.wasm": {
+      "filename": "libsqlite3-wasm32-wasi.wasm",
+      "sha256": "daf705cfb609beb7f2ccaed7b750cc4d9c01eb4efe90bc82d9fbe376f68a56ea",
+      "cas_key": "daf705cfb609beb7",
+      "category": "holo-5os",
+      "source_manifest": "ghost-5os-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libsqlite3-wasm32-wasi.wasm"
+    },
+    "libsqlite3-win64.dll": {
+      "filename": "libsqlite3-win64.dll",
+      "sha256": "ce67cda162f4ee8e7c89e01653bad3525bb9cab6a2b40191dbc39c6d1469bf8c",
+      "cas_key": "ce67cda162f4ee8e",
+      "category": "holo-5os",
+      "source_manifest": "ghost-5os-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libsqlite3-win64.dll"
+    },
+    "libwebp-linux-arm64.so": {
+      "filename": "libwebp-linux-arm64.so",
+      "sha256": "21565c15cd0464650f8b8d05ca728b730cfa3a7d9b8a9c565fbb4984b9e5f9dd",
+      "cas_key": "21565c15cd046465",
+      "category": "holo-5os",
+      "source_manifest": "ghost-5os-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libwebp-linux-arm64.so"
+    },
+    "libwebp-linux-x64.so": {
+      "filename": "libwebp-linux-x64.so",
+      "sha256": "eb3fa15277abfe4d4201d83f57c0d2621226d58631fc9e59eba1b036678b996f",
+      "cas_key": "eb3fa15277abfe4d",
+      "category": "holo-5os",
+      "source_manifest": "ghost-5os-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libwebp-linux-x64.so"
+    },
+    "libwebp-macos-arm64.dylib": {
+      "filename": "libwebp-macos-arm64.dylib",
+      "sha256": "fcf6818f1d3854e0a4e4a366e96380d5de538ba81f397b5bd29cd8e48ddbc98a",
+      "cas_key": "fcf6818f1d3854e0",
+      "category": "holo-5os",
+      "source_manifest": "ghost-5os-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libwebp-macos-arm64.dylib"
+    },
+    "libwebp-wasm32-wasi.wasm": {
+      "filename": "libwebp-wasm32-wasi.wasm",
+      "sha256": "8ae767a8326aa0a7ffacdc6451a1d648801d1e969475ba5c9b4a023e12d14cf7",
+      "cas_key": "8ae767a8326aa0a7",
+      "category": "holo-5os",
+      "source_manifest": "ghost-5os-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libwebp-wasm32-wasi.wasm"
+    },
+    "libwebp-win64.dll": {
+      "filename": "libwebp-win64.dll",
+      "sha256": "c705a004d40197f709fac60ca6a67832e2c13a8ade91c27d733409a6bfb59b6f",
+      "cas_key": "c705a004d40197f7",
+      "category": "holo-5os",
+      "source_manifest": "ghost-5os-manifest.json",
+      "download_url": "https://github.com/awesome-os/upstream-mirrors/releases/download/v0.2.0-holo-5os/libwebp-win64.dll"
+    },
+    "lumi-white-dragon-brand-pack.tar.gz": {
+      "filename": "lumi-white-dragon-brand-pack.tar.gz",
+      "sha256": "3f67de1de09c703f5fe299e65725c14bbef53cb3c52b5648b07f7b24e1ecdb40",
+      "cas_key": "3f67de1de09c703f",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/lumi-white-dragon-brand-pack.tar.gz"
+    },
+    "lumi-white-dragon.ico": {
+      "filename": "lumi-white-dragon.ico",
+      "sha256": "0ef951f1f9904563e5b7619336390cd163a8a7c6b4f103b35de3fe2de073d943",
+      "cas_key": "0ef951f1f9904563",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/lumi-white-dragon.ico"
+    },
+    "sectium-shell-win64.b8p": {
+      "filename": "sectium-shell-win64.b8p",
+      "sha256": "7c820b6b557a4366358a3bcdf4c8ec4873061ceb249780af81962744f8bb611f",
+      "cas_key": "7c820b6b557a4366",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/sectium-shell-win64.b8p"
+    },
+    "v8-include-eaf3708a.tar.gz": {
+      "filename": "v8-include-eaf3708a.tar.gz",
+      "sha256": "5df70d97db94eb9163b8baa26fc35d53a355140405281f4bb9c82315c9adc1c1",
+      "cas_key": "5df70d97db94eb91",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/v8-include-eaf3708a.tar.gz"
+    },
+    "v8-shared-linux-x64.tar.gz": {
+      "filename": "v8-shared-linux-x64.tar.gz",
+      "sha256": "39b0d6a4493285b6928b7f131d52adffd5973c32c0c57ff4d41d8dce4986dd95",
+      "cas_key": "39b0d6a4493285b6",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/v8-shared-linux-x64.tar.gz"
+    },
+    "v8-shared-macos-arm64.tar.gz": {
+      "filename": "v8-shared-macos-arm64.tar.gz",
+      "sha256": "db54ec797f28f4d5a93c54a28291edf9723eeb8c8e9013e0954e3691ecf99e5a",
+      "cas_key": "db54ec797f28f4d5",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/v8-shared-macos-arm64.tar.gz"
+    },
+    "v8-shared-win64.b8p": {
+      "filename": "v8-shared-win64.b8p",
+      "sha256": "8027458c5b7f730e47bbfff581e6454f2c54e598be80fc51c171e5df20b5b554",
+      "cas_key": "8027458c5b7f730e",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/v8-shared-win64.b8p"
+    },
+    "v8-shared-win64.zip": {
+      "filename": "v8-shared-win64.zip",
+      "sha256": "1be3760e89a4b04b03aadb8a5071febf1fdcebc80bbe97f4c519cae8118364cb",
+      "cas_key": "1be3760e89a4b04b",
+      "category": "baseline",
+      "source_manifest": "RollingReleaseManifest.json",
+      "download_url": "https://github.com/awesome-os/sectium-browser/releases/download/v0.6.1-baseline/v8-shared-win64.zip"
+    }
+  }
+}
