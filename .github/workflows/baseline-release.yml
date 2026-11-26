@@ -96,22 +96,15 @@ jobs:
             --pattern "ghost-shards-manifest.json" \
             --dir dist-baseline --clobber || true
 
-          echo "Pulling Zero-CMake 5-OS Holo Shards + Ghost Build Stacks manifests (awesome-os/upstream-mirrors)..."
+          echo "Pulling Zero-CMake 5-OS Holo Shards + Holo v11 Global CAS manifests (awesome-os/upstream-mirrors + awesome-os/holo-v11 + awesome-os/chromium-baseline)..."
           gh release download "v0.2.0-holo-5os" \
             --repo awesome-os/upstream-mirrors \
-            --pattern "ghost-5os-manifest.json" \
+            --pattern "holo-v11-5os-manifest.json" \
             --dir dist-baseline --clobber || true
-          gh release download "v0.1.0-ghost-toolchains" \
-            --repo awesome-os/upstream-mirrors \
-            --pattern "ghost-toolchains-manifest.json" \
-            --dir dist-baseline --clobber || true
-
-          echo "Pulling 4-OS b8g-ghost stubs + SDK (awesome-os/b8g-ghost @ v0.1.0)..."
-          gh release download "v0.1.0" \
-            --repo awesome-os/b8g-ghost \
-            --pattern "ghost_sectium_display*" \
-            --pattern "b8g-ghost-sdk.tar.gz" \
-            --dir dist-baseline --clobber || true
+          curl -fsSL "https://raw.githubusercontent.com/awesome-os/holo-v11/main/index/holo-compiler-lockfile.json" \
+            -o dist-baseline/holo-compiler-lockfile.json || true
+          curl -fsSL "https://raw.githubusercontent.com/awesome-os/chromium-baseline/main/upstream/UPSTREAM-LOCK.json" \
+            -o dist-baseline/chromium-baseline-lock.json || true
 
           ls -lh dist-baseline
 
@@ -136,7 +129,7 @@ jobs:
           cp dist-baseline/RollingReleaseManifest.json manifests/RollingReleaseManifest.json
           cp dist-baseline/ghost-index.json manifests/ghost-index.json
           cp dist-baseline/SHA256SUMS.txt manifests/SHA256SUMS.txt
-          for f in ghost-shards-manifest.json ghost-5os-manifest.json ghost-toolchains-manifest.json; do
+          for f in ghost-shards-manifest.json holo-v11-5os-manifest.json holo-compiler-lockfile.json chromium-baseline-lock.json; do
             [ -f "dist-baseline/$f" ] && cp "dist-baseline/$f" "manifests/$f" || true
           done
           git config user.name "github-actions[bot]"

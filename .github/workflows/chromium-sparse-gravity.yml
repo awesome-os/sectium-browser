@@ -238,9 +238,9 @@ jobs:
           cd /tmp/dist && sha256sum *.tar.gz > SHA256SUMS-expat-x64.txt
           gh release upload "$TAG" /tmp/dist/* --repo awesome-os/sectium-browser --clobber
 
-  emit-ghost-registry-manifest:
+  emit-holo-v11-registry-manifest:
     needs: [shard-boringssl, shard-brotli, shard-webp, shard-zlib-ng, shard-libpng, shard-sqlite3, shard-freetype, shard-harfbuzz, shard-libjpeg-turbo, shard-expat]
-    name: Emit Unified GhostModuleRegistry Manifest (All 10 Shards)
+    name: Emit Unified Holo v11 Registry Manifest (All 10 Shards)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-node@v4
@@ -270,8 +270,8 @@ jobs:
                 });
               }
             }
-            const manifest = { schema: 'b8g-ghost-registry-v1', tag, total_artifacts: entries.length, artifacts: entries };
+            const manifest = { schema: 'holo-v11-registry', tag, total_artifacts: entries.length, artifacts: entries };
             fs.writeFileSync('/tmp/ghost-shards-manifest.json', JSON.stringify(manifest, null, 2) + '\n');
-            console.log('[ghost-registry] Emitted manifest with', entries.length, 'verified SHA-256 shard artifacts');
+            console.log('[holo-v11-registry] Emitted manifest with', entries.length, 'verified SHA-256 shard artifacts');
           "
           gh release upload "$TAG" /tmp/ghost-shards-manifest.json --repo awesome-os/sectium-browser --clobber

@@ -1,26 +1,30 @@
-name: V8 Upstream — Real Damped Gravity Compile-Release-Bounce (Free Cloud Runner)
+name: V8 Upstream — Unified Multi-OS Damped Gravity Compile (Linux / Win64 / macOS ARM64)
 
 on:
   workflow_dispatch:
     inputs:
+      target_os:
+        description: 'Target OS build lane: linux, win64, or macos-arm64'
+        required: true
+        default: 'linux'
       release_tag:
         description: 'Target release tag for the cloud-compiled V8 pack'
         required: true
         default: 'v0.6.0-v8-cloud'
       build_flavor:
-        description: 'component (default: dynamic shared libv8.so/.dll/.dylib hydrated via b8g-ghost cas-v1 for Sectium, just-js/lo & bun-neon-v8 — zero libv8_monolith bloat)'
+        description: 'component (default: dynamic shared libv8.so/.dll/.dylib hydrated via Holo v11 CAS for Sectium, just-js/lo & bun-neon-v8 — zero libv8_monolith bloat)'
         required: true
         default: 'component'
       target_cpu:
-        description: 'Target CPU architecture: x64 or arm64 (cross-compiled on ubuntu-latest)'
+        description: 'Target CPU architecture: x64 or arm64 (for linux lane)'
         required: true
         default: 'x64'
       bounce_index:
-        description: 'Current Damped Gravity bounce (0 = start)'
+        description: 'Current Damped Gravity bounce (0 = start, linux lane)'
         required: true
         default: '0'
       max_bounces:
-        description: 'Safety cap on total bounces'
+        description: 'Safety cap on total bounces (linux lane)'
         required: true
         default: '12'
       drop_seconds:
@@ -34,6 +38,7 @@ permissions:
 
 jobs:
   v8-gravity-bounce:
+    if: (inputs.target_os || 'linux') == 'linux'
     runs-on: ubuntu-latest
     steps:
       - name: Reclaim ~30 GB Free SSD on Free ubuntu-latest
@@ -126,7 +131,6 @@ jobs:
               tar -xzf "/tmp/v8-restore/v8-drop-${PREV}-objs.tar.gz" -C /tmp/v8-work/v8/out/Build
             fi
           fi
-          # Critical: preserve strict mtime ordering (src < gen < obj < .so) so Ninja skips all cached codegen & .o files!
           if [ -d /tmp/v8-work/v8/out/Build/gen ]; then
             find /tmp/v8-work/v8/out/Build/gen -type f -exec touch {} +
             sleep 1
@@ -143,7 +147,7 @@ jobs:
         env:
           DROP_SECONDS: ${{ inputs.drop_seconds || '420' }}
           BOUNCE_INDEX: ${{ inputs.bounce_index || '0' }}
-          FLAVOR: ${{ inputs.build_flavor || 'lo-monolith' }}
+          FLAVOR: ${{ inputs.build_flavor || 'component' }}
         run: |
           export PATH="/tmp/v8-work/depot_tools:$PATH"
           cd /tmp/v8-work/v8
@@ -201,6 +205,7 @@ jobs:
           fi
           echo "[gravity] Bouncing to Drop #${NEXT} of ${MAX_BOUNCES} (${{ steps.compile.outputs.obj_count }} .o files done so far)..."
           gh workflow run v8-gravity-compile.yml --repo awesome-os/sectium-browser \
+            -f target_os="linux" \
             -f release_tag="${{ inputs.release_tag }}" \
             -f build_flavor="${{ inputs.build_flavor }}" \
             -f target_cpu="${{ inputs.target_cpu }}" \
@@ -213,7 +218,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ inputs.release_tag }}
-          FLAVOR: ${{ inputs.build_flavor || 'lo-monolith' }}
+          FLAVOR: ${{ inputs.build_flavor || 'component' }}
           TARGET_CPU: ${{ inputs.target_cpu || 'x64' }}
           BOUNCE_INDEX: ${{ inputs.bounce_index || '0' }}
         run: |
@@ -229,5 +234,132 @@ jobs:
           sha256sum * > "SHA256SUMS-${FLAVOR}-${TARGET_CPU}.txt"
           ls -lh /tmp/v8-dist
           gh release view "$TAG" --repo awesome-os/sectium-browser >/dev/null 2>&1 || \
-            gh release create "$TAG" --repo awesome-os/sectium-browser --title "Upstream V8 ${TAG} (${V8_SHA}) — Cloud-Compiled via Damped Gravity" --notes "Real upstream V8 (\`${V8_SHA}\`) built on free \`ubuntu-latest\` via Damped Gravity (supports both \`component\` shared libs and \`lo-monolith\` \`libv8_monolith.a\` + headers for \`just-js/lo\` & \`bun-neon-v8\`)."
+            gh release create "$TAG" --repo awesome-os/sectium-browser --title "Upstream V8 ${TAG} (${V8_SHA}) — Cloud-Compiled via Damped Gravity" --notes "Real upstream V8 (\`${V8_SHA}\`) built on free \`ubuntu-latest\` via Damped Gravity (aligned with awesome-os/chromium-baseline + awesome-os/holo-v11)."
+          gh release upload "$TAG" /tmp/v8-dist/* --repo awesome-os/sectium-browser --clobber
+
+  build-v8-win64-component:
+    if: inputs.target_os == 'win64'
+    runs-on: windows-2022
+    steps:
+      - name: Check Free Disk Space
+        shell: pwsh
+        run: Get-PSDrive C, D -ErrorAction SilentlyContinue | Format-Table Name, Used, Free -AutoSize
+
+      - name: Setup depot_tools & Shallow Upstream V8 Source
+        shell: cmd
+        run: |
+          mkdir D:\v8-work
+          cd /d D:\v8-work
+          git clone --depth=1 https://chromium.googlesource.com/chromium/tools/depot_tools.git
+          set PATH=D:\v8-work\depot_tools;%PATH%
+          set DEPOT_TOOLS_WIN_TOOLCHAIN=0
+          call gclient --version
+          call fetch --no-history v8
+          cd /d D:\v8-work\v8
+          for /f %%i in ('git rev-parse --short HEAD') do echo V8_SHA=%%i>> %GITHUB_ENV%
+
+      - name: Configure Win64 Component Build GN Args (v8.dll + v8_libbase.dll + v8_libplatform.dll)
+        shell: pwsh
+        run: |
+          $env:PATH = "D:\v8-work\depot_tools;$env:PATH"
+          $env:DEPOT_TOOLS_WIN_TOOLCHAIN = "0"
+          Set-Location D:\v8-work\v8
+          $installedSdk = (Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\Include" -Directory | Where-Object { Test-Path (Join-Path $_.FullName "um") } | Sort-Object Name -Descending | Select-Object -First 1).Name
+          Write-Host "[v8-win64] Using installed Windows SDK: $installedSdk"
+          $stPath = "build\toolchain\win\setup_toolchain.py"
+          (Get-Content $stPath -Raw) -replace '10\.0\.\d+\.\d+', $installedSdk | Set-Content $stPath -NoNewline
+          $winGn = "build\config\win\BUILD.gn"
+          (Get-Content $winGn -Raw) -replace 'NTDDI_WIN11_[A-Z0-9_]+', 'NTDDI_WIN10_NI' | Set-Content $winGn -NoNewline
+          New-Item -ItemType Directory -Force -Path out\Component | Out-Null
+          @"
+          is_component_build = true
+          is_debug = false
+          target_cpu = "x64"
+          v8_monolithic = false
+          v8_use_external_startup_data = false
+          treat_warnings_as_errors = false
+          symbol_level = 0
+          v8_enable_sandbox = true
+          use_clang_modules = false
+          "@ | Set-Content -Path out\Component\args.gn -Encoding Ascii
+          gn gen out/Component
+
+      - name: Compile Upstream Win64 V8 Component DLLs
+        shell: cmd
+        run: |
+          set PATH=D:\v8-work\depot_tools;%PATH%
+          set DEPOT_TOOLS_WIN_TOOLCHAIN=0
+          cd /d D:\v8-work\v8
+          ninja -C out/Component v8_libbase v8_libplatform v8
+
+      - name: Pack & Upload v8-shared-win64.zip to GitHub Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.release_tag || 'v0.6.0-v8-cloud' }}
+        run: |
+          New-Item -ItemType Directory -Force -Path D:\v8-dist | Out-Null
+          $outDir = "D:\v8-work\v8\out\Component"
+          $files = Get-ChildItem $outDir -File | Where-Object { $_.Name -match '\.(dll|dll\.lib)$' }
+          $files | Select-Object Name, Length | Format-Table -AutoSize
+          Compress-Archive -Path ($files.FullName) -DestinationPath "D:\v8-dist\v8-shared-win64.zip" -Force
+          $hash = (Get-FileHash -Algorithm SHA256 "D:\v8-dist\v8-shared-win64.zip").Hash.ToLowerInvariant()
+          "$hash  v8-shared-win64.zip" | Set-Content "D:\v8-dist\SHA256SUMS-component-win64.txt" -Encoding Ascii
+          gh release upload $env:TAG "D:\v8-dist\v8-shared-win64.zip" "D:\v8-dist\SHA256SUMS-component-win64.txt" --repo awesome-os/sectium-browser --clobber
+
+  build-v8-macos-arm64:
+    if: inputs.target_os == 'macos-arm64'
+    runs-on: macos-15
+    steps:
+      - name: Check Free Disk Space
+        run: df -h /
+
+      - name: Setup depot_tools & Shallow Upstream V8 Source
+        run: |
+          mkdir -p /tmp/v8-work
+          cd /tmp/v8-work
+          git clone --depth=1 https://chromium.googlesource.com/chromium/tools/depot_tools.git
+          export PATH="/tmp/v8-work/depot_tools:$PATH"
+          fetch --no-history v8
+          cd /tmp/v8-work/v8
+          V8_SHA=$(git rev-parse --short HEAD)
+          echo "V8_SHA=$V8_SHA" >> "$GITHUB_ENV"
+          echo "[v8-macos-arm64] Upstream V8 HEAD=$V8_SHA"
+
+      - name: Configure macOS ARM64 Component Build GN Args (libv8.dylib)
+        run: |
+          export PATH="/tmp/v8-work/depot_tools:$PATH"
+          cd /tmp/v8-work/v8
+          mkdir -p out/Build
+          cat << 'EOF' > out/Build/args.gn
+          is_component_build = true
+          is_debug = false
+          target_cpu = "arm64"
+          v8_monolithic = false
+          v8_use_external_startup_data = false
+          treat_warnings_as_errors = false
+          symbol_level = 0
+          v8_enable_sandbox = true
+          EOF
+          gn gen out/Build
+
+      - name: Compile Upstream macOS ARM64 V8 Component Dylibs
+        run: |
+          export PATH="/tmp/v8-work/depot_tools:$PATH"
+          cd /tmp/v8-work/v8
+          autoninja -C out/Build v8 v8_libbase v8_libplatform
+
+      - name: Pack & Upload v8-shared-macos-arm64.tar.gz to GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.release_tag || 'v0.7.0-v8-cloud' }}
+        run: |
+          mkdir -p /tmp/v8-dist
+          (cd /tmp/v8-work/v8/out/Build && tar -czf /tmp/v8-dist/v8-shared-macos-arm64.tar.gz lib*.dylib)
+          (cd /tmp/v8-dist && shasum -a 256 v8-shared-macos-arm64.tar.gz > SHA256SUMS-component-macos-arm64.txt)
+          ls -lh /tmp/v8-dist/
+          gh release view "$TAG" --repo awesome-os/sectium-browser >/dev/null 2>&1 || \
+            gh release create "$TAG" --repo awesome-os/sectium-browser \
+              --title "V8 Upstream Cloud Component Builds (${TAG}) — Multi-OS" \
+              --notes "Freshly cloud-compiled upstream V8 component libraries across Linux x64/ARM64, Win64, and macOS ARM64 on free GitHub runners."
           gh release upload "$TAG" /tmp/v8-dist/* --repo awesome-os/sectium-browser --clobber

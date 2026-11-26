@@ -92,7 +92,7 @@ jobs:
           cat > release-notes.md <<EOF
           ## Sectium Browser ${TAG}
 
-          Sovereign Chromium 158+ / V8 15.8+ desktop browser with **AtlasKV Sovereign Search**, **3-layer Chrome-nudge-free Google web search** (zero DuckDuckGo), pure-art **Sectium Canvas** New Tab, and zero-duplication \`b8g-ghost @ cas-v1\` hydration.
+          Sovereign Chromium 158+ / V8 15.8+ desktop browser with **AtlasKV Sovereign Search**, **3-layer Chrome-nudge-free Google web search** (zero DuckDuckGo), pure-art **Sectium Canvas** New Tab, and zero-duplication **Holo v11 CAS** (\`awesome-os/chromium-baseline\` + \`awesome-os/holo-v11\`) hydration.
 
           ### Quick Install
 
