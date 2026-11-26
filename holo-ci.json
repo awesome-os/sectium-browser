@@ -1,0 +1,15 @@
+{
+  "schema": "holo-ci.v1",
+  "name": "sectium-browser",
+  "kind": "app",
+  "tests": [
+    "node --test baseline-manifest.test.mts app/tab-layout.test.mts app/search/atlaskv-search.test.mts installer/release-profile.test.mts installer/security-hardening.test.mts shell/virtual-frame-shell.test.mts upstream/chromium-tracker.test.mts"
+  ],
+  "docs": [
+    "README.md"
+  ],
+  "guards": {
+    "zeroGhost": true,
+    "zeroCasV1": true
+  }
+}
