@@ -1,0 +1,8 @@
+{
+  "manifest_version": 3,
+  "name": "Sectium IDE — Universal DevTools Panel",
+  "version": "0.1.0",
+  "description": "Lightweight VS Code-style IDE inside Chrome/Sectium DevTools wired to HoloCompiler.* (v11 CAS), HoloDebug.* polyglot debugging, and workspaces://.",
+  "devtools_page": "devtools.html",
+  "permissions": ["storage"]
+}

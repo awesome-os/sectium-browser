@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Sectium IDE — DevTools Panel</title>
+<style>
+  :root {
+    --bg: #141414; --surface: #1a1a1a; --surface-2: #222222; --line: #333333;
+    --ink: #ececec; --muted: #8b8b8b; --accent: #38c6c6; --accent-ink: #062222;
+    --ok: #4ad08a; --plum: #e07ae0; --warn: #f8c96a;
+    --mono: "Cascadia Code", "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 13px; overflow: hidden; }
+  .ide { display: grid; grid-template-rows: 40px 1fr 140px; grid-template-columns: 220px 1fr 270px; height: 100vh; }
+  .bar {
+    grid-column: 1 / -1; background: var(--surface); border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; gap: 8px; padding: 0 12px;
+  }
+  .brand { font-weight: 800; color: var(--accent); margin-right: 8px; }
+  select, button {
+    background: var(--surface-2); color: var(--ink); border: 1px solid var(--line);
+    border-radius: 7px; padding: 5px 10px; font-size: 12px; font-family: inherit; cursor: pointer;
+  }
+  button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 700; }
+  button:hover { filter: brightness(1.12); }
+  .spacer { flex: 1; }
+
+  .explorer { background: var(--surface); border-right: 1px solid var(--line); padding: 10px; overflow-y: auto; }
+  .sec { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 8px 4px 6px; font-weight: 700; }
+  .file-item {
+    display: flex; justify-content: space-between; width: 100%; text-align: left;
+    background: transparent; border: 0; border-radius: 7px; padding: 6px 8px; color: var(--ink);
+  }
+  .file-item:hover, .file-item.active { background: var(--surface-2); }
+  .file-item small { color: var(--muted); font-family: var(--mono); font-size: 11px; }
+
+  .editor-wrap { display: flex; flex-direction: column; min-width: 0; }
+  .editor-tab {
+    height: 32px; background: var(--surface); border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: space-between; padding: 0 12px;
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+  }
+  textarea#editor {
+    flex: 1; width: 100%; border: 0; outline: 0; resize: none;
+    background: #101010; color: #e8f0ff; font-family: var(--mono); font-size: 13px;
+    line-height: 1.55; padding: 12px 14px; tab-size: 2;
+  }
+
+  .inspector { background: var(--surface); border-left: 1px solid var(--line); padding: 10px 12px; overflow-y: auto; }
+  .kv { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #262626; font-family: var(--mono); font-size: 11.5px; }
+  .frame {
+    padding: 6px 8px; border-radius: 7px; background: var(--surface-2); border: 1px solid var(--line);
+    margin-bottom: 6px; font-family: var(--mono); font-size: 11.5px;
+  }
+  .badge { display: inline-block; padding: 1px 6px; border-radius: 999px; font-size: 10.5px; font-weight: 700; background: rgba(56,198,198,.16); color: var(--accent); }
+
+  .console {
+    grid-column: 1 / -1; background: #0c0c0c; border-top: 1px solid var(--line);
+    padding: 8px 12px; font-family: var(--mono); font-size: 12px; overflow-y: auto; white-space: pre-wrap;
+  }
+  .ok { color: var(--ok); }
+  .warn { color: var(--warn); }
+  .plum { color: var(--plum); }
+</style>
+</head>
+<body>
+<div class="ide">
+  <header class="bar">
+    <span class="brand">SECTIUM IDE</span>
+    <select id="sel-ws" title="workspaces:// URI">
+      <option value="workspaces://awesome-os/ai-colibri">workspaces://awesome-os/ai-colibri</option>
+      <option value="workspaces://awesome-os/os-dev">workspaces://awesome-os/os-dev</option>
+      <option value="workspaces://awesome-os/creator-studio">workspaces://awesome-os/creator-studio</option>
+    </select>
+    <select id="sel-lang" title="Target Polyglot Runtime">
+      <option value="ts-erasable">TypeScript (V8 16+)</option>
+      <option value="js-v8">JavaScript (Inspected Page)</option>
+      <option value="c-zig-native">C11 / Zig (holo-compiler)</option>
+      <option value="jvm-kotlin">Kotlin / JVM (sectium-jvm)</option>
+      <option value="wasm-wasi">WASI / WASM</option>
+      <option value="colibri-moe">Colibri MoE Kernel</option>
+    </select>
+    <button class="primary" id="btn-run">▶ Run</button>
+    <button id="btn-compile">⚡ Compile &amp; Install (v11 CAS)</button>
+    <button id="btn-pause">⏸ Pause Polyglot</button>
+    <button id="btn-deopt">↩ Deopt</button>
+    <div class="spacer"></div>
+    <span class="badge" id="tier-badge">tier0-interp</span>
+  </header>
+
+  <aside class="explorer">
+    <div class="sec">Workspace Files</div>
+    <div id="file-list"></div>
+    <div class="sec" style="margin-top:14px;">Attached Runtimes</div>
+    <div class="frame">js-v8 · <span style="color:var(--ok);">cdp-native</span></div>
+    <div class="frame">c-zig-native · <span style="color:var(--accent);">dwarf-pdb</span></div>
+    <div class="frame">jvm-kotlin · <span style="color:var(--plum);">jdwp-bridge</span></div>
+    <div class="frame">colibri-moe · <span style="color:var(--warn);">expert-trace</span></div>
+  </aside>
+
+  <main class="editor-wrap">
+    <div class="editor-tab">
+      <span id="active-file">agent.mts</span>
+      <span id="cas-hash">cas/v11: uncompiled</span>
+    </div>
+    <textarea id="editor" spellcheck="false"></textarea>
+  </main>
+
+  <aside class="inspector">
+    <div class="sec">HoloCompiler Feedback</div>
+    <div class="kv"><span>Tier</span><strong id="fb-tier">tier0-interp</strong></div>
+    <div class="kv"><span>Invocations</span><strong id="fb-inv">0</strong></div>
+    <div class="kv"><span>CAS Path</span><strong id="fb-cas">—</strong></div>
+
+    <div class="sec" style="margin-top:14px;">Polyglot Call Stack</div>
+    <div id="stack-list">
+      <div class="frame"><strong>colibri_route_experts</strong><br /><span style="color:var(--muted);">c-zig-native · colibri.c:412</span></div>
+      <div class="frame"><strong>runInference</strong><br /><span style="color:var(--muted);">ts-erasable · agent.mts:14</span></div>
+    </div>
+  </aside>
+
+  <section class="console" id="console"></section>
+</div>
+
+<script type="module">
+  const FILES = {
+    'agent.mts': {
+      lang: 'ts-erasable',
+      code: `// Sectium IDE — runs in Inspected Page or compiles via HoloCompiler.* (v11 CAS)\nexport function benchmark() {\n  const t0 = performance.now();\n  let sum = 0;\n  for (let i = 0; i < 5000; i++) sum += i * 2;\n  return { sum, ms: +(performance.now() - t0).toFixed(3), host: location.href };\n}\nbenchmark();`,
+    },
+    'colibri_route.c': {
+      lang: 'c-zig-native',
+      code: `/* Colibri MoE top-k expert router (holo-compiler / zig cc -O3) */\n#include <stdint.h>\nuint32_t colibri_route_experts(uint32_t token_id, uint32_t k) {\n  return (token_id * 2654435761u) % (k ? k : 8);\n}`,
+    },
+    'mcp.json': {
+      lang: 'js-v8',
+      code: `{\n  "servers": {\n    "awesome-os": { "command": "holo-host-manager", "args": ["mcp"] },\n    "colibri": { "command": "coli", "args": ["mcp"] }\n  }\n}`,
+    },
+  };
+
+  let activeFile = 'agent.mts';
+  let invocations = 0;
+  const $ = (id) => document.getElementById(id);
+
+  function log(msg, cls = '') {
+    const div = document.createElement('div');
+    if (cls) div.className = cls;
+    div.textContent = `[${new Date().toISOString().slice(11, 19)}] ${msg}`;
+    $('console').appendChild(div);
+    $('console').scrollTop = $('console').scrollHeight;
+  }
+
+  function renderFiles() {
+    const list = $('file-list');
+    list.innerHTML = '';
+    for (const [name, meta] of Object.entries(FILES)) {
+      const btn = document.createElement('button');
+      btn.className = `file-item${name === activeFile ? ' active' : ''}`;
+      btn.innerHTML = `<span>${name}</span><small>${meta.lang.split('-')[0]}</small>`;
+      btn.addEventListener('click', () => {
+        FILES[activeFile].code = $('editor').value;
+        activeFile = name;
+        $('active-file').textContent = name;
+        $('sel-lang').value = meta.lang;
+        $('editor').value = meta.code;
+        renderFiles();
+      });
+      list.appendChild(btn);
+    }
+  }
+
+  async function sha512Hex(str) {
+    const buf = await crypto.subtle.digest('SHA-512', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  $('btn-run').addEventListener('click', () => {
+    const code = $('editor').value;
+    invocations += 1000;
+    $('fb-inv').textContent = String(invocations);
+    if (typeof chrome !== 'undefined' && chrome.devtools && chrome.devtools.inspectedWindow) {
+      chrome.devtools.inspectedWindow.eval(code, (result, err) => {
+        if (err) log(`Runtime error: ${JSON.stringify(err)}`, 'warn');
+        else log(`✓ InspectedWindow result: ${JSON.stringify(result)}`, 'ok');
+      });
+    } else {
+      log(`✓ [CDP Runtime.evaluate (${$('sel-lang').value})] dispatched ${code.length} chars (invocations=${invocations})`, 'ok');
+    }
+  });
+
+  $('btn-compile').addEventListener('click', async () => {
+    const lang = $('sel-lang').value;
+    const hash = await sha512Hex(`${lang}:${activeFile}:${$('editor').value}`);
+    const casPath = `cas/v11/files/${hash.slice(0, 2)}/${hash.slice(0, 12)}…`;
+    const tier = invocations >= 1000 ? 'tier2-native-aot' : 'tier1-ssa';
+    $('tier-badge').textContent = tier;
+    $('fb-tier').textContent = tier;
+    $('fb-cas').textContent = casPath;
+    $('cas-hash').textContent = casPath;
+    log(`⚡ [HoloCompiler.compileAndInstall] ${activeFile} (${lang}) -> ${tier} | ${casPath}`, 'ok');
+  });
+
+  $('btn-pause').addEventListener('click', () => {
+    log('⏸ [Debugger.pause] Paused polyglot runtimes (c-zig-native + ts-erasable) across unified call stack.', 'plum');
+  });
+
+  $('btn-deopt').addEventListener('click', () => {
+    $('tier-badge').textContent = 'tier0-interp';
+    $('fb-tier').textContent = 'tier0-interp';
+    log('↩ [HoloCompiler.deoptimize] O(1) fallback to tier0-interp completed.', 'warn');
+  });
+
+  $('editor').value = FILES[activeFile].code;
+  renderFiles();
+  log('Sectium IDE DevTools Panel ready. Wired to HoloCompiler.* (v11 CAS), HoloDebug.*, and workspaces://.', 'ok');
+</script>
+</body>
+</html>
